@@ -77,7 +77,7 @@ namespace min2phase{
      * @return         : the moved necessary to solve the cube. Delete the return value when
      *                   you don't need it anymore.
      */
-    std::string solve(const std::string& facelets, int8_t maxDepth, int32_t probeMax, int32_t probeMin, int8_t verbose);
+    std::string solve(const std::string& facelets, int8_t maxDepth, int32_t probeMax, int32_t probeMin, int8_t verbose, uint8_t* usedMoves = nullptr);
 }
 
 #endif //MIN2PHASE
