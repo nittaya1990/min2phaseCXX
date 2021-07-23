@@ -1,6 +1,6 @@
-#include "Coords.h"
+#include "coords.h"
 
-namespace min2phase { namespace Coords {
+namespace min2phase { namespace coords {
         /**
          * In this array are stored the cubes result from each possible move
          * from a solved cube. The motion of the corner and edges moved from
@@ -9,7 +9,7 @@ namespace min2phase { namespace Coords {
          * whe can make a multiplication of a cube and a basic move to get
          * a new cube. This increase the speed of the algorithm.
          */
-        CubieCube moveCube[CubeInfo::N_MOVES]{};
+        CubieCube moveCube[info::N_MOVES]{};
 
         //symmetry
         /**
@@ -19,38 +19,38 @@ namespace min2phase { namespace Coords {
          * If you apply F to the cube x1 and R to x2, the two cube are the same
          * because if you rotate x1, you get x2. This increase the speed of the algorithm.
          */
-        CubieCube CubeSym[CubeInfo::SYM];
+        CubieCube CubeSym[info::SYM];
 
-        long moveCubeSym[CubeInfo::N_MOVES] = {0};//TODO
+        int64_t moveCubeSym[info::N_MOVES] = {0};//TODO
 
         /**
          * This matrix is used to convert symmetry index into one symmetry for the CubeSym.
          */
-        int8_t SymMult[CubeInfo::SYM][CubeInfo::SYM] = {0};
+        int8_t SymMult[info::SYM][info::SYM] = {0};
 
         /**
          * This matrix is used to convert Symmetry for CubeSym into symmetry index.
          */
-        int8_t SymMultInv[CubeInfo::SYM][CubeInfo::SYM] = {0};
+        int8_t SymMultInv[info::SYM][info::SYM] = {0};
 
-        int8_t SymMove[CubeInfo::SYM][CubeInfo::N_MOVES] = {0};//TODO
-        int8_t Sym8Move[8 * CubeInfo::N_MOVES] = {0};//TODO
-        int8_t SymMoveUD[CubeInfo::SYM][CubeInfo::N_MOVES] = {0};//TODO
+        int8_t SymMove[info::SYM][info::N_MOVES] = {0};//TODO
+        int8_t Sym8Move[8 * info::N_MOVES] = {0};//TODO
+        int8_t SymMoveUD[info::SYM][info::N_MOVES] = {0};//TODO
 
         /**
          * This is used to convert the middle slice perm.
          */
-        int8_t MPermInv[CubeInfo::N_MPERM] = {0};
+        int8_t MPermInv[info::N_MPERM] = {0};
 
         /**
          * This is used to convert the permutation into corner comb.
          */
-        int8_t Perm2CombP[CubeInfo::N_PERM_SYM] = {0};
+        int8_t Perm2CombP[info::N_PERM_SYM] = {0};
 
         /**
          * This is used to convert a symmetry index into a permutation of edges or corner.
          */
-        unsigned short PermInvEdgeSym[CubeInfo::N_PERM_SYM] = {0};
+        uint16_t PermInvEdgeSym[info::N_PERM_SYM] = {0};
 
 
         /**
@@ -65,25 +65,25 @@ namespace min2phase { namespace Coords {
          * sym = EPermR2S[ edge perm]
          * sym = E2C(EPermR2S[corner perm])
          */
-        unsigned short EPermR2S[CubeInfo::N_PERM] = {0};
+        uint16_t EPermR2S[info::N_PERM] = {0};
 
         /**
          * This is used to converts the edge orientation into the symmetry.
          * sym = FlipR2S[ edge orientation ]
          */
-        unsigned short FlipR2S[CubeInfo::N_FLIP] = {0};
+        uint16_t FlipR2S[info::N_FLIP] = {0};
 
         /**
          * This is used to converts the corner orientation into the symmetry.
          * sym = TwistR2S[ corner orientation ]
          */
-        unsigned short TwistR2S[CubeInfo::N_TWIST] = {0};
+        uint16_t TwistR2S[info::N_TWIST] = {0};
 
         /**
          * This is used to converts the symmetry into the edge orientation.
          * sym = FlipS2RF[ symmetry ]
          */
-        unsigned short FlipS2RF[CubeInfo::N_FLIP_SYM * CubeInfo::SYM_CLASSES] = {0};
+        uint16_t FlipS2RF[info::N_FLIP_SYM * info::SYM_CLASSES] = {0};
 
         /**
          * Below there are the coordinate used in phase 1 and 2 (see Kociemba's algorithm).
@@ -100,79 +100,79 @@ namespace min2phase { namespace Coords {
         /**
          * This matrix contains the moving table for the edge orientation.
          */
-        unsigned short FlipMove[CubeInfo::N_FLIP_SYM][CubeInfo::N_MOVES] = {0};
+        uint16_t FlipMove[info::N_FLIP_SYM][info::N_MOVES] = {0};
 
         /**
          * This matrix contains the moving table for the corner orientation.
          */
-        unsigned short TwistMove[CubeInfo::N_TWIST_SYM][CubeInfo::N_MOVES] = {0};
+        uint16_t TwistMove[info::N_TWIST_SYM][info::N_MOVES] = {0};
 
         /**
          * This matrix contains the moving table for the UDSlice coordinate.
          */
-        unsigned short UDSliceMove[CubeInfo::N_SLICE][CubeInfo::N_MOVES] = {0};
+        uint16_t UDSliceMove[info::N_SLICE][info::N_MOVES] = {0};
 
         /**
          * This matrix contains the moving table for the symmetry in phase 1.
          */
-        unsigned short UDSliceConj[CubeInfo::N_SLICE][CubeInfo::SYM_CLASSES] = {0};
+        uint16_t UDSliceConj[info::N_SLICE][info::SYM_CLASSES] = {0};
 
         /**
          * This matrix contains the pruning table for the UDsliceTwist coordinate.
          */
-        int UDSliceTwistPrun[CubeInfo::N_SLICE*CubeInfo::N_TWIST_SYM/CubeInfo::SYM_CLASSES+1] = {0};
+        int32_t UDSliceTwistPrun[info::N_SLICE * info::N_TWIST_SYM / info::SYM_CLASSES + 1] = {0};
 
         /**
          * This matrix contains the pruning table for the UDsliceFlip coordinate.
          */
-        int UDSliceFlipPrun[CubeInfo::N_SLICE*CubeInfo::N_FLIP_SYM/CubeInfo::SYM_CLASSES+1] = {0};
+        int32_t UDSliceFlipPrun[info::N_SLICE * info::N_FLIP_SYM / info::SYM_CLASSES + 1] = {0};
 
         /**
          * This matrix contains the pruning table for the edge and corner orientation coordinate.
          */
-        int TwistFlipPrun[CubeInfo::N_FLIP*CubeInfo::N_TWIST_SYM/CubeInfo::SYM_CLASSES+1] = {0};
+        int32_t TwistFlipPrun[info::N_FLIP * info::N_TWIST_SYM / info::SYM_CLASSES + 1] = {0};
 
         ///phase 2 coords
 
         /**
          * This matrix contains the moving table for the corner permutation.
          */
-        unsigned short CPermMove[CubeInfo::N_PERM_SYM][CubeInfo::N_MOVES2] = {0};
+        uint16_t CPermMove[info::N_PERM_SYM][info::N_MOVES2] = {0};
 
         /**
          * This matrix contains the moving table for the edge permutation.
          */
-        unsigned short EPermMove[CubeInfo::N_PERM_SYM][CubeInfo::N_MOVES2] = {0};
+        uint16_t EPermMove[info::N_PERM_SYM][info::N_MOVES2] = {0};
 
         /**
          * This matrix contains the moving table for the UDSliceSorted permutation.
          */
-        uint8_t MPermMove[CubeInfo::N_MPERM][CubeInfo::N_MOVES2] = {0};
+        uint8_t MPermMove[info::N_MPERM][info::N_MOVES2] = {0};
 
         /**
          * This matrix contains the moving table for the corner comb permutation.
          */
-        uint8_t CCombPMove[CubeInfo::N_COMB][CubeInfo::N_MOVES2] = {0};
+        uint8_t CCombPMove[info::N_COMB][info::N_MOVES2] = {0};
 
         /**
          * This matrix contains the moving table for the symmetry of UDSliceSorted.
          */
-        uint8_t MPermConj[CubeInfo::N_MPERM][CubeInfo::SYM] = {0};
+        uint8_t MPermConj[info::N_MPERM][info::SYM] = {0};
 
         /**
          * This matrix contains the moving table for the symmetry of corner perm in the upper slice.
          */
-        uint8_t CCombPConj[CubeInfo::N_COMB][CubeInfo::SYM] = {0};
+        uint8_t CCombPConj[info::N_COMB][info::SYM] = {0};
 
         /**
          * This matrix contains the pruning table for the edge permutation coordinate.
          */
-        int MCPermPrun[CubeInfo::N_MPERM * CubeInfo::N_PERM_SYM/CubeInfo::SYM_CLASSES+1] = {0};
+        int32_t MCPermPrun[info::N_MPERM * info::N_PERM_SYM / info::SYM_CLASSES + 1] = {0};
 
         /**
          * This matrix contains the pruning table for the corner permutation coordinate.
          */
-        int EPermCCombPPrun[CubeInfo::N_COMB * CubeInfo::N_PERM_SYM/CubeInfo::SYM_CLASSES+1] = {0};
+        int32_t EPermCCombPPrun[info::N_COMB * info::N_PERM_SYM / info::SYM_CLASSES + 1] = {0};
 
 
         /**
@@ -199,7 +199,7 @@ namespace min2phase { namespace Coords {
      *
      * This is e2c.
      */
-    static const int SYM_E2C_MAGIC = 0x00DDDD00;
+    static const int32_t SYM_E2C_MAGIC = 0x00DDDD00;
 
     /**
      * This indicates if the coordinates and symmetries are initialized.
@@ -214,7 +214,7 @@ namespace min2phase { namespace Coords {
      * Used only in the coordinate computation.
      * This is temporary.
      */
-    static unsigned short FlipS2R[CubeInfo::N_FLIP_SYM];
+    static uint16_t FlipS2R[info::N_FLIP_SYM];
 
     /**
      * This is used to convert the raw symmetry to raw coordinate
@@ -222,7 +222,7 @@ namespace min2phase { namespace Coords {
      * Used only in the coordinate computation.
      * This is temporary.
      */
-    static unsigned short TwistS2R[CubeInfo::N_TWIST_SYM];
+    static uint16_t TwistS2R[info::N_TWIST_SYM];
 
     /**
      * This is used to convert the raw symmetry to raw coordinate of
@@ -230,24 +230,24 @@ namespace min2phase { namespace Coords {
      * Used only in the coordinate computation.
      * This is temporary.
      */
-    static unsigned short EPermS2R[CubeInfo::N_PERM_SYM];
+    static uint16_t EPermS2R[info::N_PERM_SYM];
 
     ///Symmetries
 
     /**
      * This is a temporary array used to compute the symmetry state of edge orientation.
      */
-    static unsigned short SymStateTwist[CubeInfo::N_TWIST_SYM];
+    static uint16_t SymStateTwist[info::N_TWIST_SYM];
 
     /**
      * This is a temporary array used to compute the symmetry state for corner orientation.
      */
-    static unsigned short SymStateFlip[CubeInfo::N_FLIP_SYM];
+    static uint16_t SymStateFlip[info::N_FLIP_SYM];
 
     /**
      * This is a temporary array used to compute the symmetry state for permutations.
      */
-    static unsigned short SymStatePerm [CubeInfo::N_PERM_SYM];
+    static uint16_t SymStatePerm [info::N_PERM_SYM];
 
     //init all coordinates
     void init() {
@@ -283,12 +283,12 @@ namespace min2phase { namespace Coords {
         sinv.setValues(CubeSym[SymMultInv[0][idx]]);
         s.setValues(CubeSym[idx]);
 
-        for (corn = 0; corn < CubeInfo::NUMBER_CORNER; corn++) {
-            oriA = sinv.corners[a.corners[s.corners[corn] & 7] & 7] >> CubeInfo::CORNE_ORI_CASES;
-            oriB = a.corners[s.corners[corn] & 7] >> CubeInfo::CORNE_ORI_CASES;
-            ori = (oriA < CubeInfo::CORNE_ORI_CASES) ? oriB : (CubeInfo::CORNE_ORI_CASES - oriB) %
-                                                              CubeInfo::CORNE_ORI_CASES;
-            b.corners[corn] = sinv.corners[a.corners[s.corners[corn] & 7] & 7] & 7 | ori << CubeInfo::CORNE_ORI_CASES;
+        for (corn = 0; corn < info::NUMBER_CORNER; corn++) {
+            oriA = sinv.corners[a.corners[s.corners[corn] & 7] & 7] >> info::CORNE_ORI_CASES;
+            oriB = a.corners[s.corners[corn] & 7] >> info::CORNE_ORI_CASES;
+            ori = (oriA < info::CORNE_ORI_CASES) ? oriB : (info::CORNE_ORI_CASES - oriB) %
+                                                          info::CORNE_ORI_CASES;
+            b.corners[corn] = sinv.corners[a.corners[s.corners[corn] & 7] & 7] & 7 | ori << info::CORNE_ORI_CASES;
         }
     }
 
@@ -300,14 +300,14 @@ namespace min2phase { namespace Coords {
         sinv.setValues(CubeSym[SymMultInv[0][idx]]);
         s.setValues(CubeSym[idx]);
 
-        for (ed = 0; ed < CubeInfo::NUMBER_EDGES; ed++)
+        for (ed = 0; ed < info::NUMBER_EDGES; ed++)
             b.edges[ed] =
                     sinv.edges[a.edges[s.edges[ed] >> 1] >> 1] ^ (a.edges[s.edges[ed] >> 1] & 1) ^ (s.edges[ed] & 1);
     }
 
     //perm from sym
-    unsigned short getPermSymInv(unsigned short idx, int8_t sym, bool isCorner) {
-        unsigned short idxi = PermInvEdgeSym[idx];
+    uint16_t getPermSymInv(uint16_t idx, int8_t sym, bool isCorner) {
+        uint16_t idxi = PermInvEdgeSym[idx];
 
         if (isCorner)
             idxi = ESym2CSym(idxi);
@@ -317,7 +317,7 @@ namespace min2phase { namespace Coords {
 
     //check if two cubes are the same
     bool isSameCube(const int8_t cube1[], const int8_t cube2[], bool isEdge) {
-        const int8_t len = isEdge ? CubeInfo::NUMBER_EDGES : CubeInfo::NUMBER_CORNER;
+        const int8_t len = isEdge ? info::NUMBER_EDGES : info::NUMBER_CORNER;
         int8_t i;
 
         for (i = 0; i < len; i++)
@@ -328,21 +328,21 @@ namespace min2phase { namespace Coords {
     }
 
     //y*16+(k^e2c[k])
-    int ESym2CSym(unsigned short idx) {
+    int32_t ESym2CSym(uint16_t idx) {
         return idx ^ (SYM_E2C_MAGIC >> ((idx & 0xf) << 1) & 3);
     }
 
     //set value in pruning table
-    void setPruning(int table[], int index, int8_t value) {
+    void setPruning(int32_t table[], int32_t index, int8_t value) {
         table[index >> 3] ^= value << (index << 2); // index << 2 <=> (index & 7) << 2
     }
 
     //get value in pruning table
-    int8_t getPruning(const int table[], int index) {
+    int8_t getPruning(const int32_t table[], int32_t index) {
         return table[index >> 3] >> (index << 2) & 0xf; // index << 2 <=> (index & 7) << 2
     }
 
-    bool hasZero(int val) {
+    bool hasZero(int32_t val) {
         return ((val - 0x11111111) & ~val & 0x88888888) != 0;
     }
 
@@ -357,17 +357,17 @@ namespace min2phase { namespace Coords {
 
     //init basic 18 moves
     void initMove() {
-        const short cPermSon[CubeInfo::N_BASIC_MOVES] = {15120, 21021, 8064, 9, 1230, 224};
-        const short cOriSon[CubeInfo::N_BASIC_MOVES] = {0, 1494, 1236, 0, 412, 137};
-        const int ePermSon[CubeInfo::N_BASIC_MOVES] = {119750400, 323403417, 29441808, 5880, 2949660, 328552};
-        const short eOriSon[CubeInfo::N_BASIC_MOVES] = {0, 0, 550, 0, 0, 137};
+        const int16_t cPermSon[info::N_BASIC_MOVES] = {15120, 21021, 8064, 9, 1230, 224};
+        const int16_t cOriSon[info::N_BASIC_MOVES] = {0, 1494, 1236, 0, 412, 137};
+        const int32_t ePermSon[info::N_BASIC_MOVES] = {119750400, 323403417, 29441808, 5880, 2949660, 328552};
+        const int16_t eOriSon[info::N_BASIC_MOVES] = {0, 0, 550, 0, 0, 137};
         uint8_t i, j;
 
-        for (i = 0; i < CubeInfo::N_MOVES; i += CubeInfo::N_GROUP_MOVES)
+        for (i = 0; i < info::N_MOVES; i += info::N_GROUP_MOVES)
             moveCube[i].setValues(cPermSon[i / 3], cOriSon[i / 3], ePermSon[i / 3], eOriSon[i / 3]);
 
-        for (i = 0; i < CubeInfo::N_MOVES; i += CubeInfo::N_GROUP_MOVES) {
-            for (j = 0; j < CubeInfo::N_GROUP_MOVES - 1; j++) {
+        for (i = 0; i < info::N_MOVES; i += info::N_GROUP_MOVES) {
+            for (j = 0; j < info::N_GROUP_MOVES - 1; j++) {
                 CubieCube::EdgeMult(moveCube[i + j], moveCube[i], moveCube[i + j + 1]);
                 CubieCube::CornMult(moveCube[i + j], moveCube[i], moveCube[i + j + 1]);
             }
@@ -376,7 +376,7 @@ namespace min2phase { namespace Coords {
 
     //init all sym
     void initSym() {
-        unsigned short i;
+        uint16_t i;
         uint8_t j, k;
 
         CubieCube t, c, d, f2, u4, lr2;
@@ -385,10 +385,10 @@ namespace min2phase { namespace Coords {
         u4.setValues(15138, 0, 119765538, 7);
         lr2.setValues(5167, 0, 83473207, 0);
 
-        for (i = 0; i < CubeInfo::NUMBER_CORNER; i++)
-            lr2.corners[i] |= CubeInfo::CORNE_ORI_CASES << CubeInfo::CORNE_ORI_CASES;
+        for (i = 0; i < info::NUMBER_CORNER; i++)
+            lr2.corners[i] |= info::CORNE_ORI_CASES << info::CORNE_ORI_CASES;
 
-        for (i = 0; i < CubeInfo::SYM; i++) {
+        for (i = 0; i < info::SYM; i++) {
             CubeSym[i].setValues(c);
 
             CubieCube::CornMultFull(c, u4, d);
@@ -408,11 +408,11 @@ namespace min2phase { namespace Coords {
             }
         }
 
-        for (i = 0; i < CubeInfo::SYM; i++) {
-            for (j = 0; j < CubeInfo::SYM; j++) {
+        for (i = 0; i < info::SYM; i++) {
+            for (j = 0; j < info::SYM; j++) {
                 CubieCube::CornMultFull(CubeSym[i], CubeSym[j], c);
 
-                for (k = 0; k < CubeInfo::SYM; k++) {
+                for (k = 0; k < info::SYM; k++) {
                     if (isSameCube(CubeSym[k].corners, c.corners, false)) {
                         SymMult[i][j] = k;
                         SymMultInv[k][j] = i;
@@ -422,14 +422,14 @@ namespace min2phase { namespace Coords {
             }
         }
 
-        for (i = 0; i < CubeInfo::N_MOVES; i++) {
-            for (j = 0; j < CubeInfo::SYM; j++) {
+        for (i = 0; i < info::N_MOVES; i++) {
+            for (j = 0; j < info::SYM; j++) {
                 CornConjugate(moveCube[i], SymMultInv[0][j], c);
 
-                for (k = 0; k < CubeInfo::N_MOVES; k++) {
+                for (k = 0; k < info::N_MOVES; k++) {
                     if (isSameCube(moveCube[k].corners, c.corners, false)) {
                         SymMove[j][i] = k;
-                        SymMoveUD[j][CubeInfo::std2ud[i]] = CubeInfo::std2ud[k];
+                        SymMoveUD[j][info::std2ud[i]] = info::std2ud[k];
                         break;
                     }
                 }
@@ -444,36 +444,36 @@ namespace min2phase { namespace Coords {
 
     //raw coordinate = transformation array[symmetry]
     void initPermSym2Raw() {
-        short i;
+        int16_t i;
         CubieCube cc;
 
-        initSym2Raw(CubeInfo::N_PERM, EPermS2R, EPermR2S, SymStatePerm, EPERM_TYPE);
+        initSym2Raw(info::N_PERM, EPermS2R, EPermR2S, SymStatePerm, EPERM_TYPE);
 
-        for (i = 0; i < CubeInfo::N_PERM_SYM; i++) {
+        for (i = 0; i < info::N_PERM_SYM; i++) {
             cc.setEPerm(EPermS2R[i]);
             Perm2CombP[i] = CubieCube::getComb(cc.edges, 0, true) +
-                            CubieCube::getNParity(EPermS2R[i], CubeInfo::NUMBER_CORNER) * 70;
+                            CubieCube::getNParity(EPermS2R[i], info::NUMBER_CORNER) * 70;
             cc.invCubieCube();
             PermInvEdgeSym[i] = cc.getEPermSym();
         }
 
-        for (i = 0; i < CubeInfo::N_MPERM; i++) {
+        for (i = 0; i < info::N_MPERM; i++) {
             cc.setMPerm(i);
             cc.invCubieCube();
             MPermInv[i] = cc.getMPerm();
         }
 
-        initSym2Raw(CubeInfo::N_FLIP, FlipS2R, FlipR2S, SymStateFlip, FLIP_TYPE);
-        initSym2Raw(CubeInfo::N_TWIST, TwistS2R, TwistR2S, SymStateTwist, TWIST_TYPE);
+        initSym2Raw(info::N_FLIP, FlipS2R, FlipR2S, SymStateFlip, FLIP_TYPE);
+        initSym2Raw(info::N_TWIST, TwistS2R, TwistR2S, SymStateTwist, TWIST_TYPE);
     }
 
     //raw coordinate = transformation array[symmetry].
-    void initSym2Raw(const unsigned short N_RAW, unsigned short Sym2Raw[], unsigned short Raw2Sym[],
-                                            unsigned short SymState[], const CoordType &coord) {
+    void initSym2Raw(const uint16_t N_RAW, uint16_t Sym2Raw[], uint16_t Raw2Sym[],
+                                            uint16_t SymState[], const CoordType &coord) {
         CubieCube c, d;
         const uint8_t symInc = coord == EPERM_TYPE ? 1 : 2;
         const bool isEdge = coord != TWIST_TYPE;
-        unsigned short i, symIdx, idx, count;
+        uint16_t i, symIdx, idx, count;
         uint8_t j;
 
         idx = 0;
@@ -500,7 +500,7 @@ namespace min2phase { namespace Coords {
                     break;
             }
 
-            for (j = 0; j < CubeInfo::SYM; j += symInc) {
+            for (j = 0; j < info::SYM; j += symInc) {
                 if (isEdge)
                     EdgeConjugate(c, j, d);
                 else
@@ -533,19 +533,19 @@ namespace min2phase { namespace Coords {
 
     //Corner and Edge permutation table
     void initPermsMove() {
-        unsigned short i;
+        uint16_t i;
         uint8_t j;
         CubieCube c, d;
 
-        for (i = 0; i < CubeInfo::N_PERM_SYM; i++) {
+        for (i = 0; i < info::N_PERM_SYM; i++) {
             c.setCPerm(EPermS2R[i]);
             c.setEPerm(EPermS2R[i]);
 
-            for (j = 0; j < CubeInfo::N_MOVES2; j++) {
-                CubieCube::CornMult(c, moveCube[CubeInfo::ud2std[j]], d);
+            for (j = 0; j < info::N_MOVES2; j++) {
+                CubieCube::CornMult(c, moveCube[info::ud2std[j]], d);
                 CPermMove[i][j] = d.getCPermSym();
 
-                CubieCube::EdgeMult(c, moveCube[CubeInfo::ud2std[j]], d);
+                CubieCube::EdgeMult(c, moveCube[info::ud2std[j]], d);
                 EPermMove[i][j] = d.getEPermSym();
             }
         }
@@ -556,15 +556,15 @@ namespace min2phase { namespace Coords {
         uint8_t i, j;
         CubieCube c, d;
 
-        for (i = 0; i < CubeInfo::N_MPERM; i++) {
+        for (i = 0; i < info::N_MPERM; i++) {
             c.setMPerm(i);
 
-            for (j = 0; j < CubeInfo::N_MOVES2; j++) {
-                CubieCube::EdgeMult(c, moveCube[CubeInfo::ud2std[j]], d);
+            for (j = 0; j < info::N_MOVES2; j++) {
+                CubieCube::EdgeMult(c, moveCube[info::ud2std[j]], d);
                 MPermMove[i][j] = d.getMPerm();
             }
 
-            for (j = 0; j < CubeInfo::SYM; j++) {
+            for (j = 0; j < info::SYM; j++) {
                 EdgeConjugate(c, SymMultInv[0][j], d);
                 MPermConj[i][j] = d.getMPerm();
             }
@@ -576,12 +576,12 @@ namespace min2phase { namespace Coords {
         uint8_t i, j;
         CubieCube c, d;
 
-        for (i = 0; i < CubeInfo::N_COMB; i++) {
+        for (i = 0; i < info::N_COMB; i++) {
             c.setCComb(i % 70);
 
-            for (j = 0; j < CubeInfo::N_MOVES2; j++) {
-                CubieCube::CornMult(c, moveCube[CubeInfo::ud2std[j]], d);
-                CCombPMove[i][j] = d.getCComb() + 70 * (CubeInfo::P2_PARITY_MOVE >> j & 1 ^ (i / 70));
+            for (j = 0; j < info::N_MOVES2; j++) {
+                CubieCube::CornMult(c, moveCube[info::ud2std[j]], d);
+                CCombPMove[i][j] = d.getCComb() + 70 * (info::P2_PARITY_MOVE >> j & 1 ^ (i / 70));
             }
 
             for (j = 0; j < 16; j++) {
@@ -593,14 +593,14 @@ namespace min2phase { namespace Coords {
 
     //edge orient move table
     void initFlipMove() {
-        unsigned short i;
+        uint16_t i;
         uint8_t j;
         CubieCube c, d;
 
-        for (i = 0; i < CubeInfo::N_FLIP_SYM; i++) {
+        for (i = 0; i < info::N_FLIP_SYM; i++) {
             c.setFlip(FlipS2R[i]);
 
-            for (j = 0; j < CubeInfo::N_MOVES; j++) {
+            for (j = 0; j < info::N_MOVES; j++) {
                 CubieCube::EdgeMult(c, moveCube[j], d);
                 FlipMove[i][j] = d.getFlipSym();
             }
@@ -609,14 +609,14 @@ namespace min2phase { namespace Coords {
 
     //corner orient move table
     void initTwistMove() {
-        unsigned short i;
+        uint16_t i;
         uint8_t j;
         CubieCube c, d;
 
-        for (i = 0; i < CubeInfo::N_TWIST_SYM; i++) {
+        for (i = 0; i < info::N_TWIST_SYM; i++) {
             c.setTwist(TwistS2R[i]);
 
-            for (j = 0; j < CubeInfo::N_MOVES; j++) {
+            for (j = 0; j < info::N_MOVES; j++) {
                 CubieCube::CornMult(c, moveCube[j], d);
                 TwistMove[i][j] = d.getTwistSym();
             }
@@ -625,26 +625,26 @@ namespace min2phase { namespace Coords {
 
     //UDSLice move table
     void initUDSliceMoveConj() {
-        unsigned short i, udslice;
+        uint16_t i, udslice;
         uint8_t j, k;
         CubieCube c, d;
 
-        for (i = 0; i < CubeInfo::N_SLICE; i++) {
+        for (i = 0; i < info::N_SLICE; i++) {
             c.setUDSlice(i);
 
-            for (j = 0; j < CubeInfo::N_MOVES; j += 3) {
+            for (j = 0; j < info::N_MOVES; j += 3) {
                 CubieCube::EdgeMult(c, moveCube[j], d);
                 UDSliceMove[i][j] = d.getUDSlice();
             }
 
-            for (j = 0; j < CubeInfo::SYM; j += 2) {
+            for (j = 0; j < info::SYM; j += 2) {
                 EdgeConjugate(c, SymMultInv[0][j], d);
                 UDSliceConj[i][j >> 1] = d.getUDSlice();
             }
         }
 
-        for (i = 0; i < CubeInfo::N_SLICE; i++) {
-            for (j = 0; j < CubeInfo::N_MOVES; j += 3) {
+        for (i = 0; i < info::N_SLICE; i++) {
+            for (j = 0; j < info::N_MOVES; j += 3) {
                 udslice = UDSliceMove[i][j];
 
                 for (k = 1; k < 3; k++) {
@@ -663,7 +663,7 @@ namespace min2phase { namespace Coords {
                 MPermMove, MPermConj, CPermMove,
                 nullptr, nullptr, nullptr,
                 SymStatePerm, 0x8ea34,
-                CubeInfo::N_MPERM * CubeInfo::N_PERM_SYM / 8 + 1,
+                info::N_MPERM * info::N_PERM_SYM / 8 + 1,
                 MCPP_IDX);
 
         //PermCombPPrun
@@ -672,7 +672,7 @@ namespace min2phase { namespace Coords {
                 CCombPMove, CCombPConj, EPermMove,
                 nullptr, nullptr, nullptr,
                 SymStatePerm, 0x7d824,
-                CubeInfo::N_COMB * CubeInfo::N_PERM_SYM / 8 + 1,
+                info::N_COMB * info::N_PERM_SYM / 8 + 1,
                 PCPP_IDX);
 
         //SliceTwistPrun
@@ -681,7 +681,7 @@ namespace min2phase { namespace Coords {
                 nullptr, nullptr, nullptr,
                 UDSliceMove, UDSliceConj, TwistMove,
                 SymStateTwist, 0x69603,
-                CubeInfo::N_SLICE * CubeInfo::N_TWIST_SYM / 8 + 1,
+                info::N_SLICE * info::N_TWIST_SYM / 8 + 1,
                 STP_IDX);
 
         //SliceFlipPrun
@@ -690,7 +690,7 @@ namespace min2phase { namespace Coords {
                 nullptr, nullptr, nullptr,
                 UDSliceMove, UDSliceConj, FlipMove,
                 SymStateFlip, 0x69603,
-                CubeInfo::N_SLICE * CubeInfo::N_FLIP_SYM / 8 + 1,
+                info::N_SLICE * info::N_FLIP_SYM / 8 + 1,
                 SFP_IDX);
 
         //TwistFlipPrun
@@ -699,7 +699,7 @@ namespace min2phase { namespace Coords {
                 nullptr, nullptr, nullptr,
                 nullptr, nullptr, TwistMove,
                 SymStateTwist, 0x19603,
-                CubeInfo::N_FLIP * CubeInfo::N_TWIST_SYM / 8 + 1,
+                info::N_FLIP * info::N_TWIST_SYM / 8 + 1,
                 TFP_IDX);
     }
 
@@ -713,38 +713,38 @@ namespace min2phase { namespace Coords {
     //[N_SLICE][N_MOVES] [N_SLICE][SYM_CLASSES] [N_PERM_SYM][N_MOVES] u16 u16 u16 RawMove2, RawConj2, SymMoveVect2
     //4 TwistFlipPrun
     //NO NO [N_TWIST_SYM][N_MOVES] u16 SymMoveVect2
-    void initRawSymPrun(int PrunTable[],
-                                               uint8_t RawMove1[][CubeInfo::N_MOVES2],
-                                               uint8_t RawConj1[][CubeInfo::SYM],
-                                               unsigned short SymMoveVect1[][CubeInfo::N_MOVES2],
-                                               unsigned short RawMove2[][CubeInfo::N_MOVES],
-                                               unsigned short RawConj2[][CubeInfo::SYM_CLASSES],
-                                               unsigned short SymMoveVect2[][CubeInfo::N_MOVES],
-                                               const unsigned short SymState[], int PrunFlag, int PrunTableSize,
+    void initRawSymPrun(int32_t PrunTable[],
+                                               uint8_t RawMove1[][info::N_MOVES2],
+                                               uint8_t RawConj1[][info::SYM],
+                                               uint16_t SymMoveVect1[][info::N_MOVES2],
+                                               uint16_t RawMove2[][info::N_MOVES],
+                                               uint16_t RawConj2[][info::SYM_CLASSES],
+                                               uint16_t SymMoveVect2[][info::N_MOVES],
+                                               const uint16_t SymState[], int32_t PrunFlag, int32_t PrunTableSize,
                                                const CoordType &type) {
 
         const bool IS_TYPE_A = type < STP_IDX;
         const int8_t SYM_SHIFT = PrunFlag & 0xf;
-        const int SYM_E2C_MAGIC_P = ((PrunFlag >> 4) & 1) == 1 ? SYM_E2C_MAGIC : 0x00000000;
+        const int32_t SYM_E2C_MAGIC_P = ((PrunFlag >> 4) & 1) == 1 ? SYM_E2C_MAGIC : 0x00000000;
         const bool IS_PHASE2 = ((PrunFlag >> 5) & 1) == 1;
         const int8_t INV_DEPTH = PrunFlag >> 8 & 0xf;
         const int8_t MAX_DEPTH = PrunFlag >> 12 & 0xf;
 
         const int8_t SYM_MASK = (1 << SYM_SHIFT) - 1;
         const bool ISTFP = type == TFP_IDX;
-        const unsigned short N_RAW = ISTFP ? CubeInfo::N_FLIP : (type == MCPP_IDX ? CubeInfo::N_MPERM : (type == PCPP_IDX
-                                                                                                  ? CubeInfo::N_COMB
-                                                                                                  : CubeInfo::N_SLICE));
-        const int N_SIZE = N_RAW * (type == MCPP_IDX || type == PCPP_IDX ? CubeInfo::N_PERM_SYM : type == SFP_IDX
-                                                                                                      ? CubeInfo::N_FLIP_SYM
-                                                                                                      : CubeInfo::N_TWIST_SYM);
-        const int8_t N_MOVES = IS_PHASE2 ? CubeInfo::N_MOVES2 : CubeInfo::N_MOVES;
-        const int NEXT_AXIS_MAGIC = IS_PHASE2 ? 0x42 : 0x92492;
+        const uint16_t N_RAW = ISTFP ? info::N_FLIP : (type == MCPP_IDX ? info::N_MPERM : (type == PCPP_IDX
+                                                                                                  ? info::N_COMB
+                                                                                                  : info::N_SLICE));
+        const int32_t N_SIZE = N_RAW * (type == MCPP_IDX || type == PCPP_IDX ? info::N_PERM_SYM : type == SFP_IDX
+                                                                                                      ? info::N_FLIP_SYM
+                                                                                                      : info::N_TWIST_SYM);
+        const int8_t N_MOVES = IS_PHASE2 ? info::N_MOVES2 : info::N_MOVES;
+        const int32_t NEXT_AXIS_MAGIC = IS_PHASE2 ? 0x42 : 0x92492;
 
-        int mask, val, selArrMask, idx, idxx, i, m, done;
+        int32_t mask, val, selArrMask, idx, idxx, i, m, done;
         int8_t check, xorVal, select, fsym, depth, prun;
-        unsigned short flip, rawx, symx, symState;
-        short raw, symmetry;
+        uint16_t flip, rawx, symx, symState;
+        int16_t raw, symmetry;
         uint8_t j;
         bool inv;
 
@@ -868,8 +868,8 @@ namespace min2phase { namespace Coords {
 
         slice = cc.getUDSlice();
         prun = std::max(prun, std::max(
-                getPruning(UDSliceTwistPrun, twist * CubeInfo::N_SLICE + UDSliceConj[slice][tsym]),
-                getPruning(UDSliceFlipPrun, flip * CubeInfo::N_SLICE + UDSliceConj[slice][fsym])));
+                getPruning(UDSliceTwistPrun, twist * info::N_SLICE + UDSliceConj[slice][tsym]),
+                getPruning(UDSliceFlipPrun, flip * info::N_SLICE + UDSliceConj[slice][fsym])));
 
         if (prun > depth)
             return false;
@@ -899,8 +899,8 @@ namespace min2phase { namespace Coords {
 
         prun = std::max(
                 std::max(
-                        getPruning(UDSliceTwistPrun, twist * CubeInfo::N_SLICE + UDSliceConj[slice][tsym]),
-                        getPruning(UDSliceFlipPrun, flip * CubeInfo::N_SLICE + UDSliceConj[slice][fsym])),
+                        getPruning(UDSliceTwistPrun, twist * info::N_SLICE + UDSliceConj[slice][tsym]),
+                        getPruning(UDSliceFlipPrun, flip * info::N_SLICE + UDSliceConj[slice][fsym])),
                 getPruning(TwistFlipPrun, twist << 11 | FlipS2RF[flip << 3 | (fsym ^ tsym)]));
 
         return prun;

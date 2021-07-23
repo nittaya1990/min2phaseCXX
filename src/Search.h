@@ -1,7 +1,7 @@
 #ifndef MIN2PHASE_SEARCH_H
 #define MIN2PHASE_SEARCH_H 1
 
-#include "Coords.h"
+#include "coords.h"
 
 namespace min2phase {
 
@@ -11,27 +11,27 @@ namespace min2phase {
         static const int8_t MAX_PRE_MOVES = 20;
         static const int8_t MIN_P1LENGTH_PRE = 7;
 
-        Coords::CoordCube nodeUD[MAX_PRE_MOVES + 1]{};
-        CubieCube urfCubieCube[CubeInfo::N_BASIC_MOVES];
-        Coords::CoordCube urfCoordCube[CubeInfo::N_BASIC_MOVES]{};
+        coords::CoordCube nodeUD[MAX_PRE_MOVES + 1]{};
+        CubieCube urfCubieCube[info::N_BASIC_MOVES];
+        coords::CoordCube urfCoordCube[info::N_BASIC_MOVES]{};
         CubieCube phase1Cubie[MAX_PRE_MOVES + 1];
         CubieCube preMoveCubes[MAX_PRE_MOVES + 1];
         CubieCube solveCube;
         CubieCube::OutputFormat solution;
 
-        int8_t move[CubeInfo::MAX_MOVES_SOLVE]{};
+        int8_t move[info::MAX_MOVES_SOLVE]{};
         int8_t preMoves[MAX_PRE_MOVES]{};
 
-        long selfSym = 0;
+        int64_t selfSym = 0;
         int8_t conjMask = 0;
         int8_t urfIdx = 0;
         int8_t length1 = 0;
         int8_t depth1 = 0;
         int8_t maxDep2 = 0;
         int8_t solLen = 0;
-        int probe = 0;
-        int probeMax = 0;
-        int probeMin = 0;
+        int32_t probe = 0;
+        int32_t probeMax = 0;
+        int32_t probeMin = 0;
         int8_t verbose = 0;
         int8_t valid1 = 0;
         int8_t preMoveLen = 0;
@@ -83,7 +83,7 @@ namespace min2phase {
          * @return         : the moved necessary to solve the cube. Delete the return value when
          *                   you don't need it anymore.
          */
-        std::string solve(const std::string &facelets, int8_t maxDepth, int probeMax, int probeMin, int8_t verbose);
+        std::string solve(const std::string &facelets, int8_t maxDepth, int32_t probeMax, int32_t probeMin, int8_t verbose);
 
         int8_t verify(const std::string &facelets);
 
@@ -91,16 +91,16 @@ namespace min2phase {
 
         std::string search();
 
-        int8_t phase1PreMoves(int8_t maxl, int8_t lm, CubieCube *cc, unsigned short ssym);
+        int8_t phase1PreMoves(int8_t maxl, int8_t lm, CubieCube *cc, uint16_t ssym);
 
-        int8_t phase1(Coords::CoordCube *node, unsigned short ssym, int8_t maxl, int8_t lm);
+        int8_t phase1(coords::CoordCube *node, uint16_t ssym, int8_t maxl, int8_t lm);
 
         int8_t initPhase2Pre();
 
-        int8_t initPhase2(unsigned short p2corn, int8_t p2csym, unsigned short p2edge, int8_t p2esym, int8_t p2mid, unsigned short edgei,
-                          unsigned short corni);
+        int8_t initPhase2(uint16_t p2corn, int8_t p2csym, uint16_t p2edge, int8_t p2esym, int8_t p2mid, uint16_t edgei,
+                          uint16_t corni);
 
-        int8_t phase2(unsigned short edge, int8_t esym, unsigned short corn, int8_t csym, int8_t mid, int8_t maxl, int8_t depth,
+        int8_t phase2(uint16_t edge, int8_t esym, uint16_t corn, int8_t csym, int8_t mid, int8_t maxl, int8_t depth,
                       int8_t lm);
     };
 }

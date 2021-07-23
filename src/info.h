@@ -1,9 +1,9 @@
-#ifndef MIN2PHASE_CUBEINFO_H
-#define MIN2PHASE_CUBEINFO_H 1
+#ifndef MIN2PHASE_INFO_H
+#define MIN2PHASE_INFO_H 1
 
 #include <cstdint>
 
-namespace min2phase { namespace CubeInfo {
+namespace min2phase { namespace info {
 
     ///Moves
 
@@ -79,32 +79,32 @@ namespace min2phase { namespace CubeInfo {
      */
     const int8_t FACES = 6;
 
-    ///Coords
+    ///coords
 
     /**
      * This is the number of UDSlice coordinate. 12*11*10*9/4!
      */
-    const unsigned short N_SLICE = 495;
+    const uint16_t N_SLICE = 495;
 
     /**
      * This is the number of corner orientation coordinate. 3^7
      */
-    const unsigned short N_TWIST = 2187;
+    const uint16_t N_TWIST = 2187;
 
     /**
      * This is the number of edge orientation. 2^7
      */
-    const unsigned short N_FLIP = 2048;
+    const uint16_t N_FLIP = 2048;
 
     /**
      * This is the number of corner permutation. 8!
      */
-    const unsigned short N_PERM = 40320;
+    const uint16_t N_PERM = 40320;
 
     /**
      * This is the number of edge permutation. 12!
      */
-    const unsigned int FULL_E_PERM = 479001600;
+    const uint32_t FULL_E_PERM = 479001600;
 
     /**
      * This is the number of UDSliceSorted coordinate. 4!
@@ -121,9 +121,9 @@ namespace min2phase { namespace CubeInfo {
     const int8_t SYM = 16;
     const int8_t FULL_SYM = 48;
     const int8_t SYM_CLASSES = 8;
-    const unsigned short N_TWIST_SYM = 324;
-    const unsigned short N_FLIP_SYM = 336;
-    const unsigned short N_PERM_SYM = 2768;
+    const uint16_t N_TWIST_SYM = 324;
+    const uint16_t N_FLIP_SYM = 336;
+    const uint16_t N_PERM_SYM = 2768;
 
     /**
      * The moves used in the cube.
@@ -230,7 +230,7 @@ namespace min2phase { namespace CubeInfo {
         MISSING_CORNER = 4, ///A corner is missing in the corner permutation.
         TWISTED_CORNER = 5, ///A corner is rotated in the wrong way.
         PARITY_ERROR = 6, ///The parity of coordinates is wrong.
-        SHORT_DEPTH = 7, ///The depth assigned for the algorithm is too short.
+        SHORT_DEPTH = 7, ///The depth assigned for the algorithm is too int16_t.
         PROBE_LIMIT = 8, ///The limit of cube to explore is too low.
         MISSING_COORDS = 9
     }Errors;
@@ -272,24 +272,24 @@ namespace min2phase { namespace CubeInfo {
             {B4, R6}
     };
 
-    const int8_t ud2std[N_MOVES] = {min2phase::CubeInfo::UX1,
-                             min2phase::CubeInfo::UX2,
-                             min2phase::CubeInfo::UX3,
-                             min2phase::CubeInfo::RX2,
-                             min2phase::CubeInfo::FX2,
-                             min2phase::CubeInfo::DX1,
-                             min2phase::CubeInfo::DX2,
-                             min2phase::CubeInfo::DX3,
-                             min2phase::CubeInfo::LX2,
-                             min2phase::CubeInfo::BX2,
-                             min2phase::CubeInfo::RX1,
-                             min2phase::CubeInfo::RX3,
-                             min2phase::CubeInfo::FX1,
-                             min2phase::CubeInfo::FX3,
-                             min2phase::CubeInfo::LX1,
-                             min2phase::CubeInfo::LX3,
-                             min2phase::CubeInfo::BX1,
-                             min2phase::CubeInfo::BX3};
+    const int8_t ud2std[N_MOVES] = {min2phase::info::UX1,
+                             min2phase::info::UX2,
+                             min2phase::info::UX3,
+                             min2phase::info::RX2,
+                             min2phase::info::FX2,
+                             min2phase::info::DX1,
+                             min2phase::info::DX2,
+                             min2phase::info::DX3,
+                             min2phase::info::LX2,
+                             min2phase::info::BX2,
+                             min2phase::info::RX1,
+                             min2phase::info::RX3,
+                             min2phase::info::FX1,
+                             min2phase::info::FX3,
+                             min2phase::info::LX1,
+                             min2phase::info::LX3,
+                             min2phase::info::BX1,
+                             min2phase::info::BX3};
 
 
     /**
@@ -321,9 +321,9 @@ namespace min2phase { namespace CubeInfo {
     /**
      * In this matrix is stored the precomputed binomial coefficient.
      */
-    extern short Cnk[PRECOMPUTED_CNK][PRECOMPUTED_CNK];
+    extern int16_t Cnk[PRECOMPUTED_CNK][PRECOMPUTED_CNK];
     extern int8_t std2ud[N_MOVES];
-    extern short ckmv2bit[N_MOVES2 + 1];
+    extern int16_t ckmv2bit[N_MOVES2 + 1];
 } }
 
-#endif //MIN2PHASE_CUBEINFO_H
+#endif //MIN2PHASE_INFO_H

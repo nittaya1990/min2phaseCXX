@@ -1,32 +1,32 @@
-#include <min2phase/Tools.h>
-#include "Coords.h"
+#include <min2phase/tools.h>
+#include "coords.h"
 
-namespace min2phase { namespace Tools {
+namespace min2phase { namespace tools {
 
     //set random seed
-    void setRandomSeed(unsigned int seed) {
+    void setRandomSeed(uint32_t seed) {
         std::srand(seed);
     }
 
     //get random cube
     std::string randomState() {
-        if (!Coords::isInit())
+        if (!coords::isInit())
             return "";
 
         CubieCube cube;
         int8_t parity;
-        short cornerOri, edgeOri;
-        unsigned short cornerPerm;
-        int edgePerm;
+        int16_t cornerOri, edgeOri;
+        uint16_t cornerPerm;
+        int32_t edgePerm;
 
-        cornerPerm = std::rand() % (CubeInfo::N_PERM + 1);
-        cornerOri = std::rand() % (CubeInfo::N_TWIST + 1);
-        edgeOri = std::rand() % (CubeInfo::N_FLIP + 1);
-        parity = CubieCube::getNParity(cornerPerm, CubeInfo::NUMBER_CORNER);
+        cornerPerm = std::rand() % (info::N_PERM + 1);
+        cornerOri = std::rand() % (info::N_TWIST + 1);
+        edgeOri = std::rand() % (info::N_FLIP + 1);
+        parity = CubieCube::getNParity(cornerPerm, info::NUMBER_CORNER);
 
         do {
-            edgePerm = std::rand() % (CubeInfo::FULL_E_PERM + 1);
-        } while (CubieCube::getNParity(edgePerm, CubeInfo::NUMBER_EDGES) != parity);
+            edgePerm = std::rand() % (info::FULL_E_PERM + 1);
+        } while (CubieCube::getNParity(edgePerm, info::NUMBER_EDGES) != parity);
 
         cube.setValues(cornerPerm, cornerOri, edgePerm, edgeOri);
 
@@ -41,8 +41,8 @@ namespace min2phase { namespace Tools {
         CubieCube tmp;
 
         for (i = 0; i < length; i++) {
-            CubieCube::CornMult(c1, Coords::moveCube[scramble[i]], c2);
-            CubieCube::EdgeMult(c1, Coords::moveCube[scramble[i]], c2);
+            CubieCube::CornMult(c1, coords::moveCube[scramble[i]], c2);
+            CubieCube::EdgeMult(c1, coords::moveCube[scramble[i]], c2);
             tmp = c1;
             c1 = c2;
             c2 = tmp;

@@ -6,14 +6,15 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(include)
 
 add_executable(min2phase
-        src/CubeInfo.h
+        include.h
+        src/info.h
         src/CubieCube.h
-        src/Coords.h
+        src/coords.h
         src/Search.h
-        src/CubeInfo.cpp
+        src/info.cpp
         src/CubieCube.cpp
-        src/Coords.cpp
+        src/coords.cpp
         src/Search.cpp
-        src/Tools.cpp
+        src/tools.cpp
         src/min2phase.cpp
         main.cpp)

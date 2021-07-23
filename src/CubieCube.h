@@ -2,7 +2,7 @@
 #define MIN2PHASE_CUBIECUBE_H 1
 
 #include <string>
-#include "CubeInfo.h"
+#include "info.h"
 
 namespace min2phase {
     /**
@@ -20,13 +20,13 @@ namespace min2phase {
          * This is used to store the permutation and orientation of the edges
          * of the cube.
          */
-        int8_t edges[CubeInfo::NUMBER_EDGES] = {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22};
+        int8_t edges[info::NUMBER_EDGES] = {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22};
 
         /**
          * This is used to store the permutation and orientation of the corners
          * of the cube.
          */
-        int8_t corners[CubeInfo::NUMBER_CORNER] = {0, 1, 2, 3, 4, 5, 6, 7};
+        int8_t corners[info::NUMBER_CORNER] = {0, 1, 2, 3, 4, 5, 6, 7};
 
         /**
          * This constructor is used to create a cube with solved edges and corners
@@ -44,7 +44,7 @@ namespace min2phase {
          * @param ePerm  : the edge permutation.
          * @param eOri   : the edge orientation.
          */
-        void setValues(unsigned short cPerm, short cOri, int ePerm, short eOri);
+        void setValues(uint16_t cPerm, int16_t cOri, int32_t ePerm, int16_t eOri);
 
         /**
          * This method is used to create a new cube from an existing one.
@@ -81,13 +81,13 @@ namespace min2phase {
          *
          * @return : the symmetry.
          */
-        long selfSymmetry() const;
+        int64_t selfSymmetry() const;
 
         /**
          * This function check if the cube is possible.
          * The cube analyzed is the one store in the object of the method.
          *
-         * @return : a value that indicates the error, see CubeInfo.
+         * @return : a value that indicates the error, see info.
          */
         int8_t verify() const;
 
@@ -165,7 +165,7 @@ namespace min2phase {
          * @param n      : the size of the array.
          * @param isEdge : true if the array contains edges, false if corners.
          */
-        static void setNPerm(int8_t arr[], int idx, uint8_t n, bool isEdge);
+        static void setNPerm(int8_t arr[], int32_t idx, uint8_t n, bool isEdge);
 
         /**
          * This method is used to convert an array of corners of edges to a
@@ -176,7 +176,7 @@ namespace min2phase {
          * @param isEdge : true if the array contains edges, false if corners.
          * @return       : the coordinate permutation.
          */
-        static int getNPerm(const int8_t arr[], uint8_t n, bool isEdge);
+        static int32_t getNPerm(const int8_t arr[], uint8_t n, bool isEdge);
 
         /**
          * This method is used to set the order of edges or corners into an array
@@ -189,7 +189,7 @@ namespace min2phase {
          * @param mask   : the mask used to compute the coordinate.
          * @param isEdge : true if the array contains edges, false if corners.
          */
-        static void setComb(int8_t arr[], short idxC, uint8_t mask, bool isEdge);
+        static void setComb(int8_t arr[], int16_t idxC, uint8_t mask, bool isEdge);
 
     public:
 
@@ -203,7 +203,7 @@ namespace min2phase {
          * @param isEdge : true if the array contains edges, false if corners.
          * @return       : the coordinate of the parity of edges or corners.
          */
-        static short getComb(const int8_t arr[], uint8_t mask, bool isEdge);
+        static int16_t getComb(const int8_t arr[], uint8_t mask, bool isEdge);
 
         /**
          * This method is used to get the parity of a permutation.
@@ -212,7 +212,7 @@ namespace min2phase {
          * @param n   : the position.
          * @return    : the parity.
          */
-        static int8_t getNParity(unsigned int idx, uint8_t n);
+        static int8_t getNParity(uint32_t idx, uint8_t n);
 
         ///Phase 1 coordinates
 
@@ -222,7 +222,7 @@ namespace min2phase {
          *
          * @return : the coordinate of the this cube.
          */
-        short getFlip() const;
+        int16_t getFlip() const;
 
         /**
          * This method is used to set the edge orientation from a coordinate.
@@ -230,7 +230,7 @@ namespace min2phase {
          *
          * @param eOri : the edge orientation coord to set.
          */
-        void setFlip(short eOri);
+        void setFlip(int16_t eOri);
 
         /**
          * This method is used to get the symmetry of the edge orientation.
@@ -238,7 +238,7 @@ namespace min2phase {
          *
          * @return : the symmetry of the edge orientation.
          */
-        short getFlipSym() const;
+        int16_t getFlipSym() const;
 
 
         /**
@@ -247,7 +247,7 @@ namespace min2phase {
          *
          * @return : the coordinate of the this cube.
          */
-        short getTwist() const;
+        int16_t getTwist() const;
 
         /**
          * This method is used to set the corner orientation from a coordinate.
@@ -255,7 +255,7 @@ namespace min2phase {
          *
          * @param cOri : the corner orientation coord to set.
          */
-        void setTwist(short cOri);
+        void setTwist(int16_t cOri);
 
         /**
          * This method is used to get the symmetry of the corner orientation.
@@ -263,7 +263,7 @@ namespace min2phase {
          *
          * @return : the symmetry of the corner orientation.
          */
-        short getTwistSym() const;
+        int16_t getTwistSym() const;
 
         /**
          * This method return the coordinate from the object that indicate the
@@ -272,7 +272,7 @@ namespace min2phase {
          *
          * @return : the UDSlice edges order coordinate.
          */
-        short getUDSlice() const;
+        int16_t getUDSlice() const;
 
         /**
          * This method is used to set the coordinate that indicate the positions
@@ -281,7 +281,7 @@ namespace min2phase {
          *
          * @param udSlice : the UDSlice edges order coordinate.
          */
-        void setUDSlice(short udSlice);
+        void setUDSlice(int16_t udSlice);
 
         ///Phase 2.
 
@@ -291,7 +291,7 @@ namespace min2phase {
          *
          * @return : the corner permutation orientation
          */
-        unsigned short getCPerm() const;
+        uint16_t getCPerm() const;
 
         /**
          * This method is used to set the corner permutation from a coordinate.
@@ -299,7 +299,7 @@ namespace min2phase {
          *
          * @param perm : the corner permutation coordinate.
          */
-        void setCPerm(unsigned short perm);
+        void setCPerm(uint16_t perm);
 
         /**
          * This method is used to get the symmetry of corner permutation.
@@ -307,7 +307,7 @@ namespace min2phase {
          *
          * @return : the symmetry of the corner permutation.
          */
-        unsigned short getCPermSym() const;
+        uint16_t getCPermSym() const;
 
 
         /**
@@ -316,7 +316,7 @@ namespace min2phase {
          *
          * @return : the edge permutation orientation
          */
-        unsigned short getEPerm() const;
+        uint16_t getEPerm() const;
 
         /**
          * This method is used to set the edge permutation from a coordinate.
@@ -324,7 +324,7 @@ namespace min2phase {
          *
          * @param perm : the edge permutation coordinate.
          */
-        void setEPerm(unsigned short idx);
+        void setEPerm(uint16_t idx);
 
         /**
          * This method is used to get the symmetry of edge permutation
@@ -333,7 +333,7 @@ namespace min2phase {
          *
          * @return : the symmetry of the edge permutation.
          */
-        unsigned short getEPermSym() const;
+        uint16_t getEPermSym() const;
 
 
         /**
@@ -403,7 +403,7 @@ namespace min2phase {
             /**
              * In this array are stored all the moved used to solve the cube.
              */
-            int8_t moves[CubeInfo::MAX_MOVES_SOLVE]{};
+            int8_t moves[info::MAX_MOVES_SOLVE]{};
 
         public:
 

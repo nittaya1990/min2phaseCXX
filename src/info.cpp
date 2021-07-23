@@ -1,10 +1,10 @@
-#include "CubeInfo.h"
+#include "info.h"
 
-namespace min2phase { namespace CubeInfo {
+namespace min2phase { namespace info {
 
-    short Cnk[PRECOMPUTED_CNK][PRECOMPUTED_CNK] = {0};
+    int16_t Cnk[PRECOMPUTED_CNK][PRECOMPUTED_CNK] = {0};
     int8_t std2ud[N_MOVES] = {0};
-    short ckmv2bit[N_MOVES2+1] = {0};
+    int16_t ckmv2bit[N_MOVES2+1] = {0};
 
     void init(){
         initCnk();

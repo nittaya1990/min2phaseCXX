@@ -6,13 +6,13 @@
 ```C++
 #include <iostream>
 #include <min2phase/min2phase.h>
-#include <min2phase/Tools.h>
+#include <min2phase/tools.h>
 
-int main(int argc, char *argv[]){
+int32_t main(int32_t argc, char *argv[]){
 
     min2phase::init();
 
-    std::cout << min2phase::solve(min2phase::Tools::randomState(), 21, 1000000, 0, min2phase::APPEND_LENGTH | min2phase::USE_SEPARATOR);
+    std::cout << min2phase::solve(min2phase::tools::randomState(), 21, 1000000, 0, min2phase::APPEND_LENGTH | min2phase::USE_SEPARATOR);
     return 0;
 }
 ```
@@ -32,5 +32,5 @@ int main(int argc, char *argv[]){
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    aint64_t with this program.  If not, see <http://www.gnu.org/licenses/>.
 

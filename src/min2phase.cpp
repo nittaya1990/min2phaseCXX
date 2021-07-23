@@ -4,12 +4,12 @@
 namespace min2phase {
 
     void init() {
-        CubeInfo::init();
-        Coords::init();
+        info::init();
+        coords::init();
     }
 
     //solve the cube
-    std::string solve(const std::string &facelets, int8_t maxDepth, int probeMax, int probeMin,
+    std::string solve(const std::string &facelets, int8_t maxDepth, int32_t probeMax, int32_t probeMin,
                                      int8_t verbose) {
         Search s;
         std::string solution;

@@ -7,14 +7,14 @@
 /**
  * This class contains some useful method for the cube.
  */
-namespace min2phase { namespace Tools {
+namespace min2phase { namespace tools {
 
     /**
      * This method is used to set a seed for randomize the cube.
      *
      * @param seed : the seed for the random number.
      */
-    void setRandomSeed(unsigned int seed);
+    void setRandomSeed(uint32_t seed);
 
     /**
      * This is used to get a random cube state.

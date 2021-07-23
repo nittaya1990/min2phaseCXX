@@ -1,33 +1,11 @@
-#include "Coords.h"
+#include "coords.h"
+#include <min2phase/min2phase.h>
 
 namespace min2phase {
 
-    /**
-     * This is used to indicate if use a dot from the moves
-     * used in phase 1 and 2.
-     */
-    const int8_t USE_SEPARATOR = 1;
-
-    /**
-     * This is used to find a scramble that generate the input cube from the
-     * solved cube instead of generate a scramble that solve the cube.
-     */
-    const int8_t INVERSE_SOLUTION = 2;
-
-    /**
-     * This is used to add the number of moves used at the end of
-     * the string.
-     */
-    const int8_t APPEND_LENGTH = 4;
-
-    /**
-     * This is used to remove the spaces from moves in the output string.
-     */
-    const int8_t REMOVE_SPACES = 8;
-
     //set che coordinates of the cube
-    void CubieCube::setValues(unsigned short cPerm, short cOri, int ePerm, short eOri) {
-        setNPerm(edges, ePerm, CubeInfo::NUMBER_EDGES, true);
+    void CubieCube::setValues(uint16_t cPerm, int16_t cOri, int32_t ePerm, int16_t eOri) {
+        setNPerm(edges, ePerm, info::NUMBER_EDGES, true);
         setCPerm(cPerm);
         setTwist(cOri);
         setFlip(eOri);
@@ -42,8 +20,8 @@ namespace min2phase {
     void CubieCube::copy(const CubieCube &cube) {
         uint8_t i;
 
-        for (i = 0; i < CubeInfo::NUMBER_EDGES; i++) {
-            if (i < CubeInfo::NUMBER_CORNER)
+        for (i = 0; i < info::NUMBER_EDGES; i++) {
+            if (i < info::NUMBER_CORNER)
                 this->corners[i] = cube.corners[i];
             this->edges[i] = cube.edges[i];
         }
@@ -54,10 +32,10 @@ namespace min2phase {
         int8_t edge, corner;
         CubieCube temps;
 
-        for (edge = 0; edge < CubeInfo::NUMBER_EDGES; edge++)
+        for (edge = 0; edge < info::NUMBER_EDGES; edge++)
             temps.edges[edges[edge] >> 1] = (edge << 1 | edges[edge] & 1);
 
-        for (corner = 0; corner < CubeInfo::NUMBER_CORNER; corner++)
+        for (corner = 0; corner < info::NUMBER_CORNER; corner++)
             temps.corners[corners[corner] & 0x7] = (corner | 0x20 >> (corners[corner] >> 3) & 0x18);
 
         copy(temps);
@@ -67,32 +45,32 @@ namespace min2phase {
     void CubieCube::URFConjugate() {
         CubieCube temps;
 
-        CornMult(Coords::urfInv, *this, temps);
-        CornMult(temps, Coords::urf, *this);
-        EdgeMult(Coords::urfInv, *this, temps);
-        EdgeMult(temps, Coords::urf, *this);
+        CornMult(coords::urfInv, *this, temps);
+        CornMult(temps, coords::urf, *this);
+        EdgeMult(coords::urfInv, *this, temps);
+        EdgeMult(temps, coords::urf, *this);
     }
 
-    long CubieCube::selfSymmetry() const {
+    int64_t CubieCube::selfSymmetry() const {
         CubieCube c(*this);
         CubieCube d;
         int8_t urfInv;
         uint8_t i;
-        unsigned short cpermx, cperm = c.getCPermSym() >> 4;
-        long symType = 0L;
+        uint16_t cpermx, cperm = c.getCPermSym() >> 4;
+        int64_t symType = 0L;
 
-        for (urfInv = 0; urfInv < CubeInfo::N_BASIC_MOVES; urfInv++) {
+        for (urfInv = 0; urfInv < info::N_BASIC_MOVES; urfInv++) {
             cpermx = c.getCPermSym() >> 4;
 
             if (cperm == cpermx) {
-                for (i = 0; i < CubeInfo::SYM; i++) {
-                    Coords::CornConjugate(c, Coords::SymMultInv[0][i], d);
+                for (i = 0; i < info::SYM; i++) {
+                    coords::CornConjugate(c, coords::SymMultInv[0][i], d);
 
-                    if (Coords::isSameCube(d.corners, corners, false)) {
-                        Coords::EdgeConjugate(c, Coords::SymMultInv[0][i], d);
+                    if (coords::isSameCube(d.corners, corners, false)) {
+                        coords::EdgeConjugate(c, coords::SymMultInv[0][i], d);
 
-                        if (Coords::isSameCube(d.edges, edges, true))
-                            symType |= 1L << std::min(int8_t(urfInv << 4 | i), int8_t(CubeInfo::FULL_SYM));
+                        if (coords::isSameCube(d.edges, edges, true))
+                            symType |= 1L << std::min(int8_t(urfInv << 4 | i), int8_t(info::FULL_SYM));
                     }
                 }
             }
@@ -109,78 +87,78 @@ namespace min2phase {
     //check if the cube is possible
     int8_t CubieCube::verify() const {
         uint8_t i;
-        unsigned short sum = 0;
-        unsigned short mask = 0;
+        uint16_t sum = 0;
+        uint16_t mask = 0;
 
-        for (i = 0; i < CubeInfo::NUMBER_EDGES; i++) {
+        for (i = 0; i < info::NUMBER_EDGES; i++) {
             mask |= 1 << (edges[i] >> 1);
             sum ^= edges[i] & 1;
         }
 
         if (mask != 0xfff)
-            return CubeInfo::MISSING_EDGE;
+            return info::MISSING_EDGE;
 
         if (sum != 0)
-            return CubeInfo::TWISTED_EDGE;
+            return info::TWISTED_EDGE;
 
         mask = 0;
         sum = 0;
 
-        for (i = 0; i < CubeInfo::NUMBER_CORNER; i++) {
-            mask |= 1 << (corners[i] & (CubeInfo::NUMBER_CORNER - 1));
-            sum += corners[i] >> CubeInfo::CORNE_ORI_CASES;
+        for (i = 0; i < info::NUMBER_CORNER; i++) {
+            mask |= 1 << (corners[i] & (info::NUMBER_CORNER - 1));
+            sum += corners[i] >> info::CORNE_ORI_CASES;
         }
 
         if (mask != 0xff)
-            return CubeInfo::MISSING_CORNER;
+            return info::MISSING_CORNER;
 
-        if (sum % CubeInfo::CORNE_ORI_CASES != 0)
-            return CubeInfo::TWISTED_CORNER;
+        if (sum % info::CORNE_ORI_CASES != 0)
+            return info::TWISTED_CORNER;
 
-        if ((getNParity(getNPerm(edges, CubeInfo::NUMBER_EDGES, true), CubeInfo::NUMBER_EDGES) ^
-             getNParity(getCPerm(), CubeInfo::NUMBER_CORNER)) != 0)
-            return CubeInfo::PARITY_ERROR;
+        if ((getNParity(getNPerm(edges, info::NUMBER_EDGES, true), info::NUMBER_EDGES) ^
+             getNParity(getCPerm(), info::NUMBER_CORNER)) != 0)
+            return info::PARITY_ERROR;
 
-        return CubeInfo::NO_ERROR;
+        return info::NO_ERROR;
     }
 
     //convert the array of colors into a cube object
     void CubieCube::toCubieCube(const int8_t f[], CubieCube &ccRet) {
         int8_t ori, i, j, col1, col2;
 
-        for (i = 0; i < CubeInfo::NUMBER_CORNER; i++)
+        for (i = 0; i < info::NUMBER_CORNER; i++)
             ccRet.corners[i] = 0;
 
-        for (i = 0; i < CubeInfo::NUMBER_EDGES; i++)
+        for (i = 0; i < info::NUMBER_EDGES; i++)
             ccRet.edges[i] = 0;
 
-        for (i = 0; i < CubeInfo::NUMBER_CORNER; i++) {
-            for (ori = 0; ori < CubeInfo::CORNE_ORI_CASES; ori++)
-                if (f[CubeInfo::cornerFacelet[i][ori]] == CubeInfo::U ||
-                    f[CubeInfo::cornerFacelet[i][ori]] == CubeInfo::D)
+        for (i = 0; i < info::NUMBER_CORNER; i++) {
+            for (ori = 0; ori < info::CORNE_ORI_CASES; ori++)
+                if (f[info::cornerFacelet[i][ori]] == info::U ||
+                    f[info::cornerFacelet[i][ori]] == info::D)
                     break;
 
-            col1 = f[CubeInfo::cornerFacelet[i][(ori + 1) % CubeInfo::CORNE_ORI_CASES]];
-            col2 = f[CubeInfo::cornerFacelet[i][(ori + 2) % CubeInfo::CORNE_ORI_CASES]];
+            col1 = f[info::cornerFacelet[i][(ori + 1) % info::CORNE_ORI_CASES]];
+            col2 = f[info::cornerFacelet[i][(ori + 2) % info::CORNE_ORI_CASES]];
 
-            for (j = 0; j < CubeInfo::NUMBER_CORNER; j++) {
-                if (col1 == CubeInfo::cornerFacelet[j][1] / 9 && col2 == CubeInfo::cornerFacelet[j][2] / 9) {
-                    ccRet.corners[i] = (int8_t)(ori % CubeInfo::CORNE_ORI_CASES << CubeInfo::CORNE_ORI_CASES | j);
+            for (j = 0; j < info::NUMBER_CORNER; j++) {
+                if (col1 == info::cornerFacelet[j][1] / 9 && col2 == info::cornerFacelet[j][2] / 9) {
+                    ccRet.corners[i] = (int8_t)(ori % info::CORNE_ORI_CASES << info::CORNE_ORI_CASES | j);
                     break;
                 }
             }
         }
 
-        for (i = 0; i < CubeInfo::NUMBER_EDGES; i++) {
-            for (j = 0; j < CubeInfo::NUMBER_EDGES; j++) {
-                if (f[CubeInfo::edgeFacelet[i][0]] == CubeInfo::edgeFacelet[j][0] / 9
-                    && f[CubeInfo::edgeFacelet[i][1]] == CubeInfo::edgeFacelet[j][1] / 9) {
+        for (i = 0; i < info::NUMBER_EDGES; i++) {
+            for (j = 0; j < info::NUMBER_EDGES; j++) {
+                if (f[info::edgeFacelet[i][0]] == info::edgeFacelet[j][0] / 9
+                    && f[info::edgeFacelet[i][1]] == info::edgeFacelet[j][1] / 9) {
                     ccRet.edges[i] = j << 1;
                     break;
                 }
 
-                if (f[CubeInfo::edgeFacelet[i][0]] == CubeInfo::edgeFacelet[j][1] / 9
-                    && f[CubeInfo::edgeFacelet[i][1]] == CubeInfo::edgeFacelet[j][0] / 9) {
+                if (f[info::edgeFacelet[i][0]] == info::edgeFacelet[j][1] / 9
+                    && f[info::edgeFacelet[i][1]] == info::edgeFacelet[j][0] / 9) {
                     ccRet.edges[i] = j << 1 | 1;
                     break;
                 }
@@ -194,38 +172,38 @@ namespace min2phase {
         int8_t j, ori;
         std::string f;
 
-        f.reserve(CubeInfo::N_PLATES + 1);
+        f.reserve(info::N_PLATES + 1);
 
         char ts[] = {'U', 'R', 'F', 'D', 'L', 'B'};
 
-        for (i = 0; i < CubeInfo::N_PLATES; i++)
-            f[i] = ts[i / CubeInfo::N_PLATES_X_FACE];
+        for (i = 0; i < info::N_PLATES; i++)
+            f[i] = ts[i / info::N_PLATES_X_FACE];
 
-        for (i = 0; i < CubeInfo::NUMBER_CORNER; i++) {
+        for (i = 0; i < info::NUMBER_CORNER; i++) {
             j = cc.corners[i] & 0x7;
             ori = cc.corners[i] >> 3;
-            for (int8_t n = 0; n < CubeInfo::CORNE_ORI_CASES; n++) {
-                f[CubeInfo::cornerFacelet[i][(n + ori) % CubeInfo::CORNE_ORI_CASES]] = ts[
-                        CubeInfo::cornerFacelet[j][n] / CubeInfo::N_PLATES_X_FACE];
+            for (int8_t n = 0; n < info::CORNE_ORI_CASES; n++) {
+                f[info::cornerFacelet[i][(n + ori) % info::CORNE_ORI_CASES]] = ts[
+                        info::cornerFacelet[j][n] / info::N_PLATES_X_FACE];
             }
         }
 
-        for (i = 0; i < CubeInfo::NUMBER_EDGES; i++) {
+        for (i = 0; i < info::NUMBER_EDGES; i++) {
             j = cc.edges[i] >> 1;
             ori = cc.edges[i] & 1;
-            for (int8_t n = 0; n < CubeInfo::EDGE_ORI_CASES; n++) {
-                f[CubeInfo::edgeFacelet[i][(n + ori) % CubeInfo::EDGE_ORI_CASES]] = ts[CubeInfo::edgeFacelet[j][n] /
-                                                                                       CubeInfo::N_PLATES_X_FACE];
+            for (int8_t n = 0; n < info::EDGE_ORI_CASES; n++) {
+                f[info::edgeFacelet[i][(n + ori) % info::EDGE_ORI_CASES]] = ts[info::edgeFacelet[j][n] /
+                                                                               info::N_PLATES_X_FACE];
             }
         }
 
-        f[CubeInfo::N_PLATES] = '\0';
+        f[info::N_PLATES] = '\0';
         return f;
     }
 
     // a * b edge only
     void CubieCube::EdgeMult(const CubieCube &a, const CubieCube &b, CubieCube &prod) {
-        for (int8_t edge = 0; edge < CubeInfo::NUMBER_EDGES; edge++)
+        for (int8_t edge = 0; edge < info::NUMBER_EDGES; edge++)
             prod.edges[edge] = a.edges[b.edges[edge] >> 1] ^ (b.edges[edge] & 1);
     }
 
@@ -233,7 +211,7 @@ namespace min2phase {
     void CubieCube::CornMult(const CubieCube &a, const CubieCube &b, CubieCube &prod) {
         int8_t oriA, oriB, corn;
 
-        for (corn = 0; corn < CubeInfo::NUMBER_CORNER; corn++) {
+        for (corn = 0; corn < info::NUMBER_CORNER; corn++) {
             oriA = a.corners[b.corners[corn] & 7] >> 3;
             oriB = b.corners[corn] >> 3;
             prod.corners[corn] = a.corners[b.corners[corn] & 7] & 7 | (oriA + oriB) % 3 << 3;
@@ -244,7 +222,7 @@ namespace min2phase {
     void CubieCube::CornMultFull(const CubieCube &a, const CubieCube &b, CubieCube &prod) {
         int8_t oriA, oriB, corn, ori;
 
-        for (corn = 0; corn < CubeInfo::NUMBER_CORNER; corn++) {
+        for (corn = 0; corn < info::NUMBER_CORNER; corn++) {
             oriA = a.corners[b.corners[corn] & 7] >> 3;
             oriB = b.corners[corn] >> 3;
             ori = oriA + ((oriA < 3) ? oriB : 6 - oriB);
@@ -265,11 +243,11 @@ namespace min2phase {
     }
 
     //set permutation
-    void CubieCube::setNPerm(int8_t arr[], int idx, uint8_t n, bool isEdge) {
+    void CubieCube::setNPerm(int8_t arr[], int32_t idx, uint8_t n, bool isEdge) {
         uint8_t i;
-        unsigned long val = 0xFEDCBA9876543210L;
+        uint64_t val = 0xFEDCBA9876543210L;
         uint8_t v;
-        long m, extract = 0;
+        int64_t m, extract = 0;
 
         for (i = 2; i <= n; i++) {
             extract = extract << 4 | idx % i;
@@ -288,10 +266,10 @@ namespace min2phase {
     }
 
     //get permutation
-    int CubieCube::getNPerm(const int8_t arr[], uint8_t n, bool isEdge) {
+    int32_t CubieCube::getNPerm(const int8_t arr[], uint8_t n, bool isEdge) {
         uint8_t i, v;
-        int idx = 0;
-        unsigned long val = 0xFEDCBA9876543210L;
+        int32_t idx = 0;
+        uint64_t val = 0xFEDCBA9876543210L;
 
         for (i = 0; i < n - 1; i++) {
             v = getVal(arr[i], isEdge) << 2;
@@ -303,14 +281,14 @@ namespace min2phase {
     }
 
     //set the parity of corners and edges
-    void CubieCube::setComb(int8_t arr[], short idxC, uint8_t mask, bool isEdge) {
-        int8_t fill = isEdge ? CubeInfo::NUMBER_EDGES - 1 : CubeInfo::NUMBER_CORNER - 1;
+    void CubieCube::setComb(int8_t arr[], int16_t idxC, uint8_t mask, bool isEdge) {
+        int8_t fill = isEdge ? info::NUMBER_EDGES - 1 : info::NUMBER_CORNER - 1;
         int8_t i;
         int8_t r = 4;
 
         for (i = fill; i >= 0; i--) {
-            if (idxC >= CubeInfo::Cnk[i][r]) {
-                idxC -= CubeInfo::Cnk[i][r--];
+            if (idxC >= info::Cnk[i][r]) {
+                idxC -= info::Cnk[i][r--];
                 arr[i] = setVal(arr[i], r | mask, isEdge);
             } else {
                 if ((fill & 0xc) == mask)
@@ -322,22 +300,22 @@ namespace min2phase {
     }
 
     //get the parity of corners or edges
-    short CubieCube::getComb(const int8_t arr[], uint8_t mask, bool isEdge) {
+    int16_t CubieCube::getComb(const int8_t arr[], uint8_t mask, bool isEdge) {
         int8_t i, perm, r = 4;
-        short idxC = 0;
+        int16_t idxC = 0;
 
-        for (i = isEdge ? CubeInfo::NUMBER_EDGES - 1 : CubeInfo::NUMBER_CORNER - 1; i >= 0; i--) {
+        for (i = isEdge ? info::NUMBER_EDGES - 1 : info::NUMBER_CORNER - 1; i >= 0; i--) {
             perm = getVal(arr[i], isEdge);
 
             if ((perm & 0xc) == mask)
-                idxC += CubeInfo::Cnk[i][r--];
+                idxC += info::Cnk[i][r--];
         }
 
         return idxC;
     }
 
     //get the parity permutation
-    int8_t CubieCube::getNParity(unsigned int idx, uint8_t n) {
+    int8_t CubieCube::getNParity(uint32_t idx, uint8_t n) {
         int8_t i;
         int8_t p = 0;
 
@@ -352,115 +330,115 @@ namespace min2phase {
     //phase 1 coords
 
     //get edge orientation
-    short CubieCube::getFlip() const {
-        short eOri = 0;
+    int16_t CubieCube::getFlip() const {
+        int16_t eOri = 0;
         uint8_t i;
 
-        for (i = 0; i < CubeInfo::NUMBER_EDGES - 1; i++)
+        for (i = 0; i < info::NUMBER_EDGES - 1; i++)
             eOri = eOri << 1 | edges[i] & 1;
 
         return eOri;
     }
 
     //set edge orientation
-    void CubieCube::setFlip(short eOri) {
+    void CubieCube::setFlip(int16_t eOri) {
         int8_t parity = 0;
-        short val;
+        int16_t val;
         int8_t i;
 
-        for (i = CubeInfo::NUMBER_EDGES - 2; i >= 0; i--, eOri >>= 1) {
+        for (i = info::NUMBER_EDGES - 2; i >= 0; i--, eOri >>= 1) {
             parity ^= (val = eOri & 1);
             edges[i] = (int8_t)(edges[i] & ~1 | val);
         }
 
-        edges[CubeInfo::NUMBER_EDGES - 1] = (int8_t)(edges[CubeInfo::NUMBER_EDGES - 1] & ~1 | parity);
+        edges[info::NUMBER_EDGES - 1] = (int8_t)(edges[info::NUMBER_EDGES - 1] & ~1 | parity);
     }
 
     //get edge orientation symmetry
-    short CubieCube::getFlipSym() const {
-        return Coords::FlipR2S[getFlip()];
+    int16_t CubieCube::getFlipSym() const {
+        return coords::FlipR2S[getFlip()];
     }
 
     //get corner orientation
-    short CubieCube::getTwist() const {
-        short cOri = 0;
+    int16_t CubieCube::getTwist() const {
+        int16_t cOri = 0;
         uint8_t i;
 
-        for (i = 0; i < CubeInfo::NUMBER_CORNER - 1; i++)
-            cOri += (cOri << 1) + (corners[i] >> CubeInfo::CORNE_ORI_CASES);
+        for (i = 0; i < info::NUMBER_CORNER - 1; i++)
+            cOri += (cOri << 1) + (corners[i] >> info::CORNE_ORI_CASES);
 
         return cOri;
     }
 
     //set corner orientation
-    void CubieCube::setTwist(short cOri) {
+    void CubieCube::setTwist(int16_t cOri) {
         int8_t i;
         int8_t ori = 15, val;
 
-        for (i = CubeInfo::NUMBER_CORNER - 2; i >= 0; i--, cOri /= CubeInfo::CORNE_ORI_CASES) {
-            ori -= (val = cOri % CubeInfo::CORNE_ORI_CASES);
-            corners[i] = corners[i] & 0x7 | val << CubeInfo::CORNE_ORI_CASES;
+        for (i = info::NUMBER_CORNER - 2; i >= 0; i--, cOri /= info::CORNE_ORI_CASES) {
+            ori -= (val = cOri % info::CORNE_ORI_CASES);
+            corners[i] = corners[i] & 0x7 | val << info::CORNE_ORI_CASES;
         }
 
-        corners[CubeInfo::NUMBER_CORNER - 1] = (corners[CubeInfo::NUMBER_CORNER - 1] & 0x7) |
-                                               ((ori % CubeInfo::CORNE_ORI_CASES) << CubeInfo::CORNE_ORI_CASES);
+        corners[info::NUMBER_CORNER - 1] = (corners[info::NUMBER_CORNER - 1] & 0x7) |
+                                           ((ori % info::CORNE_ORI_CASES) << info::CORNE_ORI_CASES);
     }
 
     //get corner orientation symmetry
-    short CubieCube::getTwistSym() const {
-        return Coords::TwistR2S[getTwist()];
+    int16_t CubieCube::getTwistSym() const {
+        return coords::TwistR2S[getTwist()];
     }
 
     //get udslice coord
-    short CubieCube::getUDSlice() const {
-        return CubeInfo::N_SLICE - 1 - getComb(edges, CubeInfo::NUMBER_CORNER, true);
+    int16_t CubieCube::getUDSlice() const {
+        return info::N_SLICE - 1 - getComb(edges, info::NUMBER_CORNER, true);
     }
 
     //set udslice coord
-    void CubieCube::setUDSlice(short udSlice) {
-        setComb(edges, CubeInfo::N_SLICE - 1 - udSlice, CubeInfo::NUMBER_CORNER, true);
+    void CubieCube::setUDSlice(int16_t udSlice) {
+        setComb(edges, info::N_SLICE - 1 - udSlice, info::NUMBER_CORNER, true);
     }
 
     //phase 2 coords
 
     //get corner permutation
-    unsigned short CubieCube::getCPerm() const {
-        return getNPerm(corners, CubeInfo::NUMBER_CORNER, false);
+    uint16_t CubieCube::getCPerm() const {
+        return getNPerm(corners, info::NUMBER_CORNER, false);
     }
 
     //set corner permutation
-    void CubieCube::setCPerm(unsigned short perm) {
-        setNPerm(corners, perm, CubeInfo::NUMBER_CORNER, false);
+    void CubieCube::setCPerm(uint16_t perm) {
+        setNPerm(corners, perm, info::NUMBER_CORNER, false);
     }
 
     //get corner permutation symmetry
-    unsigned short CubieCube::getCPermSym() const {
-        return Coords::ESym2CSym(Coords::EPermR2S[getCPerm()]);
+    uint16_t CubieCube::getCPermSym() const {
+        return coords::ESym2CSym(coords::EPermR2S[getCPerm()]);
     }
 
     //get edge permutation
-    unsigned short CubieCube::getEPerm() const {
-        return getNPerm(edges, CubeInfo::NUMBER_CORNER, true);
+    uint16_t CubieCube::getEPerm() const {
+        return getNPerm(edges, info::NUMBER_CORNER, true);
     }
 
     //set edge permutation
-    void CubieCube::setEPerm(unsigned short idx) {
-        setNPerm(edges, idx, CubeInfo::NUMBER_EDGES - 4, true);
+    void CubieCube::setEPerm(uint16_t idx) {
+        setNPerm(edges, idx, info::NUMBER_EDGES - 4, true);
     }
 
     //get edge permutation symmetry
-    unsigned short CubieCube::getEPermSym() const {
-        return Coords::EPermR2S[getEPerm()];
+    uint16_t CubieCube::getEPermSym() const {
+        return coords::EPermR2S[getEPerm()];
     }
 
     //get udslicesorted permutation
     int8_t CubieCube::getMPerm() const {
-        return getNPerm(edges, CubeInfo::NUMBER_EDGES, true) % CubeInfo::N_MPERM;
+        return getNPerm(edges, info::NUMBER_EDGES, true) % info::N_MPERM;
     }
 
     //set udslicesorted permutation
     void CubieCube::setMPerm(int8_t idx) {
-        setNPerm(edges, idx, CubeInfo::NUMBER_EDGES, true);
+        setNPerm(edges, idx, info::NUMBER_EDGES, true);
     }
 
     //get corner symmetry
@@ -503,29 +481,29 @@ namespace min2phase {
             return;
         }
 
-        axisCur = curMove / CubeInfo::N_GROUP_MOVES;
-        axisLast = moves[length - 1] / CubeInfo::N_GROUP_MOVES;
+        axisCur = curMove / info::N_GROUP_MOVES;
+        axisLast = moves[length - 1] / info::N_GROUP_MOVES;
 
         if (axisCur == axisLast) {
-            pow = (curMove % CubeInfo::N_GROUP_MOVES + moves[length - 1] % CubeInfo::N_GROUP_MOVES + 1) % 4;
+            pow = (curMove % info::N_GROUP_MOVES + moves[length - 1] % info::N_GROUP_MOVES + 1) % 4;
 
-            if (pow == CubeInfo::N_GROUP_MOVES)
+            if (pow == info::N_GROUP_MOVES)
                 length--;
             else
-                moves[length - 1] = axisCur * CubeInfo::N_GROUP_MOVES + pow;
+                moves[length - 1] = axisCur * info::N_GROUP_MOVES + pow;
 
             return;
         }
 
-        if (length > 1 && axisCur % CubeInfo::N_GROUP_MOVES == axisLast % CubeInfo::N_GROUP_MOVES &&
-            axisCur == moves[length - 2] / CubeInfo::N_GROUP_MOVES) {
-            pow = (curMove % CubeInfo::N_GROUP_MOVES + moves[length - 2] % CubeInfo::N_GROUP_MOVES + 1) % 4;
+        if (length > 1 && axisCur % info::N_GROUP_MOVES == axisLast % info::N_GROUP_MOVES &&
+            axisCur == moves[length - 2] / info::N_GROUP_MOVES) {
+            pow = (curMove % info::N_GROUP_MOVES + moves[length - 2] % info::N_GROUP_MOVES + 1) % 4;
 
-            if (pow == CubeInfo::N_GROUP_MOVES) {
+            if (pow == info::N_GROUP_MOVES) {
                 moves[length - 2] = moves[length - 1];
                 length--;
             } else
-                moves[length - 2] = axisCur * CubeInfo::N_GROUP_MOVES + pow;
+                moves[length - 2] = axisCur * info::N_GROUP_MOVES + pow;
 
             return;
         }
@@ -536,8 +514,8 @@ namespace min2phase {
     //compute the string
     std::string CubieCube::OutputFormat::toString() {
         std::string solution;
-        int8_t urf = (format & INVERSE_SOLUTION) != 0 ? (urfIdx + CubeInfo::N_GROUP_MOVES) % 6 : urfIdx;
-        const bool useInv = urf < CubeInfo::N_GROUP_MOVES;
+        int8_t urf = (format & INVERSE_SOLUTION) != 0 ? (urfIdx + info::N_GROUP_MOVES) % 6 : urfIdx;
+        const bool useInv = urf < info::N_GROUP_MOVES;
         int8_t s;
 
         solution = "";
@@ -550,7 +528,7 @@ namespace min2phase {
                     solution += ' ';
             }
 
-            solution += move2str[CubeInfo::urfMove[urf][moves[s]]];
+            solution += move2str[info::urfMove[urf][moves[s]]];
 
             if ((format & REMOVE_SPACES) == 0)
                 solution += ' ';
