@@ -1,6 +1,7 @@
 #include <chrono>
 #include <iostream>
 #include <min2phase/min2phase.h>
+#include <min2phase/tools.h>
 #include <string>
 
 int main(int argc, char *argv[]){
@@ -9,8 +10,7 @@ int main(int argc, char *argv[]){
     auto end = std::chrono::high_resolution_clock::now();
 
     std::cout <<  std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count() << "ms\n";
-    //BRR GYW OGY BRB YBB WBO GRO OOB YYG GGR WWR OYG YOY BGW WGR WYR ORW WOB
 
-    std::cout << min2phase::solve("RUDBUDRLFLFBURRBBFFFUBFFBFDURLDDRDUDULUDLDFLLRLBUBRRBL", 21, 1000000, 0, min2phase::APPEND_LENGTH | min2phase::USE_SEPARATOR);
+    std::cout << min2phase::solve(min2phase::tools::randomState(), 21, 1000000, 0, min2phase::APPEND_LENGTH | min2phase::USE_SEPARATOR);
     return 0;
 }

@@ -5,9 +5,9 @@ namespace min2phase {
 
     //set che coordinates of the cube
     void CubieCube::setValues(uint16_t cPerm, int16_t cOri, int32_t ePerm, int16_t eOri) {
-        setNPerm(edges, ePerm, info::NUMBER_EDGES, true);
         setCPerm(cPerm);
         setTwist(cOri);
+        setNPerm(edges, ePerm, info::NUMBER_EDGES, true);
         setFlip(eOri);
     }
 
@@ -70,7 +70,7 @@ namespace min2phase {
                         coords::EdgeConjugate(c, coords::SymMultInv[0][i], d);
 
                         if (coords::isSameCube(d.edges, edges, true))
-                            symType |= 1L << std::min(int8_t(urfInv << 4 | i), int8_t(info::FULL_SYM));
+                            symType |= int64_t(1) << std::min(int64_t(urfInv << 4 | i), int64_t (info::FULL_SYM));
                     }
                 }
             }
@@ -242,8 +242,8 @@ namespace min2phase {
     //set permutation
     void CubieCube::setNPerm(int8_t arr[], int32_t idx, uint8_t n, bool isEdge) {
         uint8_t i;
-        uint64_t val = 0xFEDCBA9876543210L;
-        uint8_t v;
+        int64_t val = 0xFEDCBA9876543210L;
+        int64_t v;
         int64_t m, extract = 0;
 
         for (i = 2; i <= n; i++) {
@@ -255,7 +255,7 @@ namespace min2phase {
             v = (extract & 0xf) << 2;
             extract >>= 4;
             arr[i] = setVal(arr[i], val >> v & 0xf, isEdge);
-            m = (1L << v) - 1;
+            m = (int64_t(1) << v) - 1;
             val = (val & m) | (val >> 4 & ~m);
         }
 
@@ -266,7 +266,7 @@ namespace min2phase {
     int32_t CubieCube::getNPerm(const int8_t arr[], uint8_t n, bool isEdge) {
         uint8_t i, v;
         int32_t idx = 0;
-        uint64_t val = 0xFEDCBA9876543210L;
+        int64_t val = 0xFEDCBA9876543210L;
 
         for (i = 0; i < n - 1; i++) {
             v = getVal(arr[i], isEdge) << 2;

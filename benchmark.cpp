@@ -59,10 +59,11 @@ int main(int argc, char* argv[]){
     unsigned long initTime = benchmarkInitialization();
     float time_elapsed;
 
-#ifdef __linux__
-
     string processName;
     ifstream processordNameFile;
+
+#ifdef __linux__
+
     system("cat /proc/cpuinfo | grep \"model name\" > processorName");
     processordNameFile.open("processorName");
     getline(processordNameFile, processName);
@@ -70,11 +71,21 @@ int main(int argc, char* argv[]){
     system("rm processorName");
     cout << "Processor used (OS Linux): " << processName.substr(13, processName.size()) << endl << endl;
 
+#elif defined(_WIN32)
+
+    system("wmic cpu get name > processorName");
+    processordNameFile.open("processorName");
+    getline(processordNameFile, processName);
+    getline(processordNameFile, processName);
+    processordNameFile.close();
+    system("del processorName");
+    cout << "Processor used (OS Windows): " << processName << endl << endl;
+
 #endif
 
     min2phase::tools::setRandomSeed(time(nullptr));
 
-    cout << "Init time average: " << initTime << endl << endl;
+    cout << "Init time average: " << initTime << "ms" << endl << endl;
 
     cout << "| probeMin | Avg Length |   Time   |\n|:--------:|:----------:|:--------:|\n";
     for(int32_t probe = 5; probe <= MAX_MIN_PROBES; probe *= 2){
