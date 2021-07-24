@@ -167,12 +167,10 @@ namespace min2phase {
     }
 
     //from cube to string
-    std::string CubieCube::toFaceCube(CubieCube cc) {
+    std::string CubieCube::toFaceCube(const CubieCube &cc) {
         int8_t i;
         int8_t j, ori;
-        std::string f;
-
-        f.reserve(info::N_PLATES + 1);
+        std::string f(info::N_PLATES, ' ');
 
         char ts[] = {'U', 'R', 'F', 'D', 'L', 'B'};
 
@@ -197,7 +195,6 @@ namespace min2phase {
             }
         }
 
-        f[info::N_PLATES] = '\0';
         return f;
     }
 

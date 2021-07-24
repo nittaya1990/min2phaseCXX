@@ -106,7 +106,7 @@ namespace min2phase {
          * @param cc : the cube to convert.
          * @return   : the string that represent the cube.
          */
-        static std::string toFaceCube(CubieCube cc);
+        static std::string toFaceCube(const CubieCube &cc);
 
         /**
          * This method is used to compute the result of a * b edge only.
