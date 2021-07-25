@@ -74,6 +74,7 @@ namespace min2phase{
      * @param probeMax : the max of cube explored in phase 2.
      * @param probeMin : the min of cube explored in phase 2.
      * @param verbose  : the format for the output strings.
+     * @param usedMoves: the pointer to store the number of moves used.
      * @return         : the moved necessary to solve the cube. Delete the return value when
      *                   you don't need it anymore.
      */

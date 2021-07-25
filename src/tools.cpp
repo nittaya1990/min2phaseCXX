@@ -14,6 +14,7 @@ namespace min2phase { namespace tools {
             return "";
 
         CubieCube cube;
+
         int8_t parity;
         int16_t cornerOri, edgeOri;
         uint16_t cornerPerm;

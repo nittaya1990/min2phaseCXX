@@ -383,7 +383,10 @@ namespace min2phase {
             /**
              * This is used to convert a integer move into a string one.
              */
-            static std::string move2str[];
+            static constexpr char move2str[info::N_MOVES][3] = {
+                    "U ", "U2", "U'", "R ", "R2", "R'", "F ", "F2", "F'",
+                    "D ", "D2", "D'", "L ", "L2", "L'", "B ", "B2", "B'"
+            };
 
             /**
              * The number of moves used in phase 1.

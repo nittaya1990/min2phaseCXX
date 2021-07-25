@@ -1,7 +1,8 @@
 #include "Search.h"
 
 //configure object for solving
-std::string min2phase::Search::solve(const std::string& facelets, int8_t maxDepth, int32_t probeMax, int32_t probeMin, int8_t verbose) {
+std::string min2phase::Search::solve(const std::string &facelets, int8_t maxDepth, int32_t probeMax, int32_t probeMin,
+                                     int8_t verbose, uint8_t *movesUsed) {
     int8_t error = verify(facelets);
 
     if(!coords::isInit())
@@ -10,6 +11,7 @@ std::string min2phase::Search::solve(const std::string& facelets, int8_t maxDept
     if (error != 0)
         return std::to_string((int32_t)error);
 
+    this->movesUsed = movesUsed;
     this->solLen = maxDepth+1;
     this->probe = 0;
     this->probeMax = probeMax;
@@ -99,6 +101,9 @@ std::string min2phase::Search::search() {
                 if(!solution.isFound)
                     return std::to_string(info::PROBE_LIMIT);
 
+                if(movesUsed != nullptr)
+                    *movesUsed = solLen;
+
                 return solution.toString();
             }
         }
@@ -107,6 +112,9 @@ std::string min2phase::Search::search() {
     if(!solution.isFound){
         return std::to_string(info::SHORT_DEPTH);
     }
+
+    if(movesUsed != nullptr)
+        *movesUsed = solLen;
 
     return solution.toString();
 }

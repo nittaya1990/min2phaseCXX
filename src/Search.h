@@ -22,6 +22,8 @@ namespace min2phase {
         int8_t move[info::MAX_MOVES_SOLVE]{};
         int8_t preMoves[MAX_PRE_MOVES]{};
 
+        uint8_t* movesUsed;
+
         int64_t selfSym = 0;
         int8_t conjMask = 0;
         int8_t urfIdx = 0;
@@ -80,10 +82,12 @@ namespace min2phase {
          * @param probeMax : the max of cube explored in phase 2.
          * @param probeMin : the min of cube explored in phase 2.
          * @param verbose  : the format for the output strings.
+         * @param usedMoves: the pointer to store the number of moves used.
          * @return         : the moved necessary to solve the cube. Delete the return value when
          *                   you don't need it anymore.
          */
-        std::string solve(const std::string &facelets, int8_t maxDepth, int32_t probeMax, int32_t probeMin, int8_t verbose);
+        std::string solve(const std::string &facelets, int8_t maxDepth, int32_t probeMax, int32_t probeMin,
+                          int8_t verbose, uint8_t *movesUsed);
 
         int8_t verify(const std::string &facelets);
 

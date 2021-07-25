@@ -1,5 +1,6 @@
 #include "coords.h"
 #include <min2phase/min2phase.h>
+#include <memory>
 
 namespace min2phase {
 
@@ -170,7 +171,7 @@ namespace min2phase {
     std::string CubieCube::toFaceCube(const CubieCube &cc) {
         int8_t i;
         int8_t j, ori;
-        std::string f(info::N_PLATES, ' ');
+        char f[info::N_PLATES+1];
 
         char ts[] = {'U', 'R', 'F', 'D', 'L', 'B'};
 
@@ -195,7 +196,9 @@ namespace min2phase {
             }
         }
 
-        return f;
+        f[info::N_PLATES] = '\0';
+
+        return std::string(f);
     }
 
     // a * b edge only
@@ -448,12 +451,6 @@ namespace min2phase {
         setComb(corners, idx, 0, false);
     }
 
-    //index to string
-    std::string CubieCube::OutputFormat::move2str[] = {
-            "U ", "U2", "U'", "R ", "R2", "R'", "F ", "F2", "F'",
-            "D ", "D2", "D'", "L ", "L2", "L'", "B ", "B2", "B'"
-    };
-
     //reset output
     void CubieCube::OutputFormat::reset() {
         format = 0;
@@ -510,37 +507,50 @@ namespace min2phase {
 
     //compute the string
     std::string CubieCube::OutputFormat::toString() {
-        std::string solution;
+        std::unique_ptr<char> solution(new char[1+length*3 +((format & USE_SEPARATOR) != 0? 2: 0)+((format & APPEND_LENGTH) != 0? 5: 0)+ ((format & REMOVE_SPACES) != 0? -length: 0)]);
+        uint8_t solutionPos;
         int8_t urf = (format & INVERSE_SOLUTION) != 0 ? (urfIdx + info::N_GROUP_MOVES) % 6 : urfIdx;
         const bool useInv = urf < info::N_GROUP_MOVES;
         int8_t s;
 
-        solution = "";
+        solutionPos = 0;
 
-        for (s = useInv ? 0 : length - 1; useInv ? s < length : s >= 0; useInv ? s++ : s--) {
-            if (useInv && s == depth1 && (format & USE_SEPARATOR) != 0) {
-                solution += '.';
+        for (s = useInv? 0: length-1; useInv? s < length: s >= 0; useInv? s++: s--) {
+            if (useInv && s == depth1 && (format & USE_SEPARATOR) != 0){
+                solution.get()[solutionPos++] = '.';
 
-                if ((format & REMOVE_SPACES) == 0)
-                    solution += ' ';
+                if((format & REMOVE_SPACES) == 0)
+                    solution.get()[solutionPos++] = ' ';
+
             }
 
-            solution += move2str[info::urfMove[urf][moves[s]]];
+            solution.get()[solutionPos++] = move2str[info::urfMove[urf][moves[s]]][0];
+            solution.get()[solutionPos++] = move2str[info::urfMove[urf][moves[s]]][1];
 
-            if ((format & REMOVE_SPACES) == 0)
-                solution += ' ';
+            if((format & REMOVE_SPACES) == 0)
+                solution.get()[solutionPos++] = ' ';
 
-            if (!useInv && (format & USE_SEPARATOR) != 0 && s == depth1) {
-                solution += '.';
+            if (!useInv && (format & USE_SEPARATOR) != 0 && s == depth1){
+                solution.get()[solutionPos++] = '.';
 
-                if ((format & REMOVE_SPACES) == 0)
-                    solution += ' ';
+                if((format & REMOVE_SPACES) == 0)
+                    solution.get()[solutionPos++] = ' ';
             }
         }
 
-        if ((format & APPEND_LENGTH) != 0)
-            solution += '(' + std::to_string(length) + "f)";
+        if ((format & APPEND_LENGTH) != 0){
+            solution.get()[solutionPos++] = '(';
 
-        return solution;
+            if(length/10 != 0)
+                solution.get()[solutionPos++] = '0'+length/10;
+
+            solution.get()[solutionPos++] = '0'+(length%10);
+            solution.get()[solutionPos++] = 'f';
+            solution.get()[solutionPos++] = ')';
+        }
+
+        solution.get()[solutionPos] = '\0';
+
+        return std::string(solution.get());;
     }
 }
