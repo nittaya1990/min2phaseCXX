@@ -4,6 +4,10 @@
 
 namespace min2phase {
 
+    CubieCube::CubieCube(uint16_t cPerm, int16_t cOri, int32_t ePerm, int16_t eOri) {
+        setValues(cPerm, cOri, ePerm, eOri);
+    }
+
     //set che coordinates of the cube
     void CubieCube::setValues(uint16_t cPerm, int16_t cOri, int32_t ePerm, int16_t eOri) {
         setCPerm(cPerm);

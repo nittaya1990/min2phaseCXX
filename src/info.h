@@ -30,17 +30,17 @@ namespace min2phase { namespace info {
     /**
      * This is the max moves used to solve the cube.
      */
-    const int8_t MAX_MOVES_SOLVE = 31;
+    const int8_t MAX_LENGTH = 31;
 
     /**
      * This is the max moves used to solve the phase 1.
      */
-    const int8_t PHASE1_MOVES = 12;
+    const int8_t P1_LENGTH = 12;
 
     /**
      * This is the max moves used to solve the phase 2.
      */
-    const int8_t PHASE2_MOVES = 18;
+    const int8_t P2_LENGTH = 18;
 
     ///Cube info
 

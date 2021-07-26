@@ -32,8 +32,13 @@ namespace min2phase {
          * This constructor is used to create a cube with solved edges and corners
          * and not generated coordinates.
          */
-
         CubieCube() = default;
+
+        /**
+         * This constructor is used to create a cube from coordinates edges and corners
+         * and not generated coordinates.
+         */
+        CubieCube(uint16_t cPerm, int16_t cOri, int32_t ePerm, int16_t eOri);
 
         /**
          * This method is used to recreate a cube from a permutation ad orientation
@@ -406,7 +411,7 @@ namespace min2phase {
             /**
              * In this array are stored all the moved used to solve the cube.
              */
-            int8_t moves[info::MAX_MOVES_SOLVE]{};
+            int8_t moves[info::MAX_LENGTH]{};
 
         public:
 

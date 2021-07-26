@@ -21,9 +21,11 @@ namespace min2phase { namespace tools {
      *
      * @return : the string that contains the random cube.
      */
-    std::string randomState();
+    std::string randomCube();
 
-    std::string fromScramble(const std::string& s);
-} };
+    std::string fromScramble(const std::string &s);
+
+    std::string superFlip();
+} }
 
 #endif //MIN2PHASE_TOOLS_H

@@ -1,4 +1,6 @@
 #include <min2phase/tools.h>
+#include <memory>
+#include <iostream>
 #include "coords.h"
 
 namespace min2phase { namespace tools {
@@ -9,7 +11,7 @@ namespace min2phase { namespace tools {
     }
 
     //get random cube
-    std::string randomState() {
+    std::string randomCube() {
         if (!coords::isInit())
             return "";
 
@@ -35,7 +37,7 @@ namespace min2phase { namespace tools {
     }
 
     //convert moves to scrambled cube
-    std::string fromScramble(const int8_t *scramble, uint8_t length) {
+    std::string fromScramble(const int8_t scramble[], uint8_t length) {
         uint8_t i;
         CubieCube c1;
         CubieCube c2;
@@ -49,26 +51,20 @@ namespace min2phase { namespace tools {
             c2 = tmp;
         }
 
-        delete[] scramble;
-
         return CubieCube::toFaceCube(c1);
     }
 
     //convert moves to cube
     std::string fromScramble(const std::string &s) {
-        int8_t *arr, *ret;
-        uint8_t length = 0, n_moves;
-        int8_t i, j, axis;
+        std::unique_ptr<int8_t> arr(new int8_t[s.length()]);
 
-        while (s[length] != '\0')
-            length++;
+        int8_t n_moves, axis;
 
-        arr = new int8_t[length];
-        j = 0;
+        n_moves = 0;
         axis = -1;
 
-        for (i = 0; i < length; i++) {
-            arr[i] = 0;
+        for (size_t i = 0; i < s.length(); i++) {
+            arr.get()[i] = 0;
 
             switch (s[i]) {
                 case 'U':
@@ -91,7 +87,7 @@ namespace min2phase { namespace tools {
                     break;
                 case ' ':
                     if (axis != -1)
-                        arr[j++] = axis;
+                        arr.get()[n_moves++] = axis;
                     axis = -1;
                     break;
                 case '2':
@@ -101,20 +97,17 @@ namespace min2phase { namespace tools {
                     axis += 2;
                     break;
                 default:
-                    continue;
+                    break;
             }
         }
 
-        if (axis != -1) arr[j++] = axis;
+        if (axis != -1)
+            arr.get()[n_moves++] = axis;
 
-        ret = new int8_t[j];
-        n_moves = j;
+        return fromScramble(arr.get(), n_moves);
+    }
 
-        while (--j >= 0)
-            ret[j] = arr[j];
-
-        delete[] arr;
-
-        return fromScramble(ret, n_moves);
+    std::string superFlip(){
+        return CubieCube::toFaceCube(CubieCube(0, 0, 0, info::N_FLIP-1));
     }
 } }

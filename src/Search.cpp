@@ -90,7 +90,7 @@ void min2phase::Search::initSearch() {
 std::string min2phase::Search::search() {
 
     for (length1 = 0; length1 < solLen; length1++) {
-        maxDep2 = std::min((int32_t)info::PHASE1_MOVES, solLen - length1 - 1);
+        maxDep2 = std::min((int32_t)info::P1_LENGTH, solLen - length1 - 1);
 
         for (urfIdx =  0; urfIdx < info::N_BASIC_MOVES; urfIdx++) {
 
@@ -145,7 +145,7 @@ int8_t min2phase::Search::phase1PreMoves(int8_t maxl, int8_t lm, CubieCube* cc, 
 
     lm = lm / 3 * 3;
 
-    for (m = 0; m < info::PHASE2_MOVES; m++) {
+    for (m = 0; m < info::P2_LENGTH; m++) {
         if (m == lm || m == lm - 9 || m == lm + 9) {
             m += 2;
             continue;
@@ -179,7 +179,7 @@ int8_t min2phase::Search::phase1(coords::CoordCube* node, uint16_t ssym, int8_t 
             return 1;
     }
 
-    for (axis = 0; axis < info::PHASE2_MOVES; axis += 3) {
+    for (axis = 0; axis < info::P2_LENGTH; axis += 3) {
         if (axis == lm || axis == lm - 9)
             continue;
 
@@ -345,7 +345,7 @@ int8_t min2phase::Search::initPhase2(uint16_t p2corn, int8_t p2csym, uint16_t p2
     }
 
     if (depth2 != maxDep2) {
-        maxDep2 = std::min(int8_t (info::PHASE2_MOVES), int8_t (solLen - length1 - 1));
+        maxDep2 = std::min(int8_t (info::P2_LENGTH), int8_t (solLen - length1 - 1));
         return probe >= probeMin ? 0 : 1;
     }
 

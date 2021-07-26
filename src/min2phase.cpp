@@ -3,6 +3,7 @@
 
 namespace min2phase {
 
+    //initialization
     void init() {
         info::init();
         coords::init();

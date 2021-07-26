@@ -38,7 +38,7 @@ float benchmarkSolveMoves(int32_t probeMin, float* time_elapsed, int8_t maxMoves
     *time_elapsed = 0;
 
     for(i = 0; i < N_TIMES_BENCHMARK; i++){
-        randomState = min2phase::tools::randomState();
+        randomState = min2phase::tools::randomCube();
         begin = high_resolution_clock::now();
         min2phase::solve(randomState, maxMoves, 1000000, probeMin, 0, &usedMoves);
         end = high_resolution_clock::now();

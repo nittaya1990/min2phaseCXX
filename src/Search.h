@@ -19,7 +19,7 @@ namespace min2phase {
         CubieCube solveCube;
         CubieCube::OutputFormat solution;
 
-        int8_t move[info::MAX_MOVES_SOLVE]{};
+        int8_t move[info::MAX_LENGTH]{};
         int8_t preMoves[MAX_PRE_MOVES]{};
 
         uint8_t* movesUsed;
