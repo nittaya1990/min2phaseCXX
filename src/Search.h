@@ -6,7 +6,7 @@
 namespace min2phase {
 
     class Search {
-    public:
+    private:
 
         static const int8_t MAX_PRE_MOVES = 20;
         static const int8_t MIN_P1LENGTH_PRE = 7;
@@ -25,7 +25,7 @@ namespace min2phase {
         int8_t move[info::MAX_LENGTH]{};
         int8_t preMoves[MAX_PRE_MOVES]{};
 
-        uint8_t* movesUsed;
+        uint8_t* movesUsed = nullptr;
 
         int64_t selfSym = 0;
         int8_t conjMask = 0;
@@ -43,6 +43,8 @@ namespace min2phase {
         int8_t maxPreMoves = 0;
 
         bool allowShorter = false;
+
+    public:
 
         Search() = default;
 
@@ -93,6 +95,8 @@ namespace min2phase {
         std::string solve(const std::string &facelets, int8_t maxDepth, int32_t probeMax, int32_t probeMin,
                           int8_t verbose, uint8_t *movesUsed);
 
+    private:
+
         int8_t verify(const std::string &facelets);
 
         void initSearch();
@@ -111,9 +115,9 @@ namespace min2phase {
         int8_t phase2(uint16_t edge, int8_t esym, uint16_t corn, int8_t csym, int8_t mid, int8_t maxl, int8_t depth,
                       int8_t lm);
 
-        std::string searchopt();
+        std::string searchOpt();
 
-        int min2phase::Search::phase1opt(coords::CoordCube ud, coords::CoordCube rl, coords::CoordCube fb, long ssym, int maxl, int lm);
+        int8_t phase1opt(coords::CoordCube ud, coords::CoordCube rl, coords::CoordCube fb, int64_t ssym, int8_t maxl, int8_t lm);
     };
 }
 

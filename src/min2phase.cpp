@@ -13,6 +13,6 @@ namespace min2phase {
     std::string solve(const std::string &facelets, int8_t maxDepth, int32_t probeMax, int32_t probeMin,
                                      int8_t verbose, uint8_t* usedMoves) {
 
-        return Search().solve(facelets, maxDepth, probeMax, probeMin, verbose, usedMoves);;
+        return Search().solve(facelets, maxDepth, probeMax, probeMin, verbose, usedMoves);
     }
 }

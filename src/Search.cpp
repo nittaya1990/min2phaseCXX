@@ -21,8 +21,9 @@ std::string min2phase::Search::solve(const std::string &facelets, int8_t maxDept
 
     initSearch();
 
-    return  (verbose & OPTIMAL_SOLUTION) == 0 ? search() : searchopt();
+    return  (verbose & OPTIMAL_SOLUTION) == 0 ? search() : searchOpt();
 }
+
 
 int8_t min2phase::Search::verify(const std::string& facelets) {
     char centers[info::FACES];
@@ -110,9 +111,8 @@ std::string min2phase::Search::search() {
         }
     }
 
-    if(!solution.isFound){
+    if(!solution.isFound)
         return std::to_string(info::SHORT_DEPTH);
-    }
 
     if(movesUsed != nullptr)
         *movesUsed = solLen;
@@ -418,93 +418,94 @@ int8_t min2phase::Search::phase2(uint16_t edge, int8_t esym, uint16_t corn, int8
     return -1;
 }
 
-std::string min2phase::Search::searchopt() {
-    int maxprun1 = 0;
-    int maxprun2 = 0;
+std::string min2phase::Search::searchOpt() {
+    int8_t maxprun1 = 0,  maxprun2 = 0;
+    coords::CoordCube ud{};
+    coords::CoordCube rl{};
+    coords::CoordCube fb{};
 
-    for (int i = 0; i < 6; i++) {
+    for (uint8_t i = 0; i < info::N_BASIC_MOVES; i++) {
         urfCoordCube[i].calcPruning(false);
-        if (i < 3) {
-            maxprun1 = std::max((int)maxprun1, (int)urfCoordCube[i].prun);
-        } else {
-            maxprun2 = std::max((int)maxprun2, (int)urfCoordCube[i].prun);
-        }
+
+        if (i < info::N_BASIC_MOVES/2)
+            maxprun1 = std::max(maxprun1, urfCoordCube[i].prun);
+        else
+            maxprun2 = std::max(maxprun2, urfCoordCube[i].prun);
     }
+
     urfIdx = maxprun2 > maxprun1 ? 3 : 0;
     phase1Cubie[0] = urfCubieCube[urfIdx];
+
     for (length1 = 0; length1 < solLen; length1++) {
-        coords::CoordCube ud = urfCoordCube[0 + urfIdx];
-        coords::CoordCube rl = urfCoordCube[1 + urfIdx];
-        coords::CoordCube fb = urfCoordCube[2 + urfIdx];
+        ud = urfCoordCube[0 + urfIdx];
+        rl = urfCoordCube[1 + urfIdx];
+        fb = urfCoordCube[2 + urfIdx];
 
         if (ud.prun <= length1 && rl.prun <= length1 && fb.prun <= length1
             && phase1opt(ud, rl, fb, selfSym, length1, -1) == 0) {
-            return !solution.isFound ? "Error 8" : solution.toString();
+
+            return !solution.isFound ? std::to_string(info::PROBE_LIMIT) : solution.toString();
         }
     }
-    return !solution.isFound ? "Error 7" : solution.toString();
+
+    return !solution.isFound ? std::to_string(info::SHORT_DEPTH) : solution.toString();
 }
 
-int min2phase::Search::phase1opt(coords::CoordCube ud, coords::CoordCube rl, coords::CoordCube fb, long ssym, int maxl, int lm) {
+int8_t min2phase::Search::phase1opt(coords::CoordCube ud, coords::CoordCube rl, coords::CoordCube fb, int64_t ssym, int8_t maxl, int8_t lm) {
+    uint8_t axis, power, prun_ud, prun_rl, prun_fb, m;
+
     if (ud.prun == 0 && rl.prun == 0 && fb.prun == 0 && maxl < 5) {
         maxDep2 = maxl;
         depth1 = length1 - maxl;
         return initPhase2Pre() == 0 ? 0 : 1;
     }
 
-    int skipMoves = coords::getSkipMoves(ssym);
-
-    for (int axis = 0; axis < 18; axis += 3) {
-        if (axis == lm || axis == lm - 9) {
+    for (axis = 0; axis < info::N_MOVES; axis += info::N_GROUP_MOVES) {
+        if (axis == lm || axis == lm - 9)
             continue;
-        }
-        for (int power = 0; power < 3; power++) {
-            int m = axis + power;
+
+        for (power = 0; power < 3; power++) {
+            m = axis + power;
 
             // UD Axis
-            int prun_ud = std::max(nodeUD[maxl].doMovePrun(ud, m),nodeUD[maxl].doMovePrunConj(ud, m));
+            prun_ud = std::max(nodeUD[maxl].doMovePrun(ud, m),nodeUD[maxl].doMovePrunConj(ud, m));
 
-            if (prun_ud > maxl) {
+            if (prun_ud > maxl)
                 break;
-            } else if (prun_ud == maxl) {
+            else if (prun_ud == maxl)
                 continue;
-            }
 
             // RL Axis
             m = info::urfMove[2][m];
 
-            int prun_rl = std::max(nodeRL[maxl].doMovePrun(rl, m),
-                                   nodeRL[maxl].doMovePrunConj(rl, m));
-            if (prun_rl > maxl) {
+            prun_rl = std::max(nodeRL[maxl].doMovePrun(rl, m), nodeRL[maxl].doMovePrunConj(rl, m));
+            if (prun_rl > maxl)
                 break;
-            } else if (prun_rl == maxl) {
+            else if (prun_rl == maxl)
                 continue;
-            }
 
             // FB Axis
             m = info::urfMove[2][m];
 
-            int prun_fb = std::max(nodeFB[maxl].doMovePrun(fb, m), nodeFB[maxl].doMovePrunConj(fb, m));
-            if (prun_ud == prun_rl && prun_rl == prun_fb && prun_fb != 0) {
-                prun_fb++;
-            }
+            prun_fb = std::max(nodeFB[maxl].doMovePrun(fb, m), nodeFB[maxl].doMovePrunConj(fb, m));
 
-            if (prun_fb > maxl) {
+            if (prun_ud == prun_rl && prun_rl == prun_fb && prun_fb != 0)
+                prun_fb++;
+
+            if (prun_fb > maxl)
                 break;
-            } else if (prun_fb == maxl) {
+            else if (prun_fb == maxl)
                 continue;
-            }
 
             m = info::urfMove[2][m];
 
             move[length1 - maxl] = m;
             valid1 = std::min((int8_t) valid1, (int8_t)(length1 - maxl));
 
-            int ret = phase1opt(nodeUD[maxl], nodeRL[maxl], nodeFB[maxl], ssym & coords::moveCubeSym[m], maxl - 1, axis);
-            if (ret == 0) {
+            if (phase1opt(nodeUD[maxl], nodeRL[maxl], nodeFB[maxl], ssym & coords::moveCubeSym[m], maxl - 1, axis) == 0)
                 return 0;
-            }
         }
     }
+
     return 1;
 }

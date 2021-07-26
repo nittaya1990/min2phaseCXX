@@ -232,7 +232,7 @@ namespace min2phase { namespace info {
         PARITY_ERROR = 6, ///The parity of coordinates is wrong.
         SHORT_DEPTH = 7, ///The depth assigned for the algorithm is too int16_t.
         PROBE_LIMIT = 8, ///The limit of cube to explore is too low.
-        MISSING_COORDS = 9
+        MISSING_COORDS = 9 ///The coordinates are not initialized.
     }Errors;
 
     /**
