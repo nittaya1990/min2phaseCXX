@@ -455,6 +455,8 @@ namespace min2phase {
         setComb(corners, idx, 0, false);
     }
 
+    char constexpr CubieCube::OutputFormat::move2str[info::N_MOVES][3];
+
     //reset output
     void CubieCube::OutputFormat::reset() {
         format = 0;
