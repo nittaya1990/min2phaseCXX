@@ -4,7 +4,6 @@
 #include <min2phase/tools.h>
 #include <string>
 
-
 int main(int argc, char *argv[]){
     uint8_t movesUsed;
 
