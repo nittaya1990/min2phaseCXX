@@ -10,24 +10,24 @@ namespace min2phase{
      * This is used to indicate if use a dot from the moves
      * used in phase 1 and 2.
      */
-    const int8_t USE_SEPARATOR = 1;
+    const int8_t USE_SEPARATOR = 0x1;
 
     /**
      * This is used to find a scramble that generate the input cube from the
      * solved cube instead of generate a scramble that solve the cube.
      */
-    const int8_t INVERSE_SOLUTION = 2;
+    const int8_t INVERSE_SOLUTION = 0x2;
 
     /**
      * This is used to add the number of moves used at the end of
      * the string.
      */
-    const int8_t APPEND_LENGTH = 4;
+    const int8_t APPEND_LENGTH = 0x4;
 
     /**
-     * This is used to remove the spaces from moves in the output string.
+     *  Determines if guaranteeing the solution to be optimal.
      */
-    const int8_t REMOVE_SPACES = 8;
+    const int8_t OPTIMAL_SOLUTION = 0x8;
 
     /**
      * This function compute all the variable necessary for te algorithm.

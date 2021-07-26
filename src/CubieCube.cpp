@@ -513,7 +513,7 @@ namespace min2phase {
 
     //compute the string
     std::string CubieCube::OutputFormat::toString() {
-        std::unique_ptr<char> solution(new char[1+length*3 +((format & USE_SEPARATOR) != 0? 2: 0)+((format & APPEND_LENGTH) != 0? 5: 0)+ ((format & REMOVE_SPACES) != 0? -length: 0)]);
+        std::unique_ptr<char> solution(new char[1+length*3 +((format & USE_SEPARATOR) != 0? 2: 0)+((format & APPEND_LENGTH) != 0? 5: 0)]);
         uint8_t solutionPos;
         int8_t urf = (format & INVERSE_SOLUTION) != 0 ? (urfIdx + info::N_GROUP_MOVES) % 6 : urfIdx;
         const bool useInv = urf < info::N_GROUP_MOVES;
@@ -524,23 +524,17 @@ namespace min2phase {
         for (s = useInv? 0: length-1; useInv? s < length: s >= 0; useInv? s++: s--) {
             if (useInv && s == depth1 && (format & USE_SEPARATOR) != 0){
                 solution.get()[solutionPos++] = '.';
-
-                if((format & REMOVE_SPACES) == 0)
-                    solution.get()[solutionPos++] = ' ';
-
+                solution.get()[solutionPos++] = ' ';
             }
 
             solution.get()[solutionPos++] = move2str[info::urfMove[urf][moves[s]]][0];
             solution.get()[solutionPos++] = move2str[info::urfMove[urf][moves[s]]][1];
 
-            if((format & REMOVE_SPACES) == 0)
-                solution.get()[solutionPos++] = ' ';
+            solution.get()[solutionPos++] = ' ';
 
             if (!useInv && (format & USE_SEPARATOR) != 0 && s == depth1){
                 solution.get()[solutionPos++] = '.';
-
-                if((format & REMOVE_SPACES) == 0)
-                    solution.get()[solutionPos++] = ' ';
+                solution.get()[solutionPos++] = ' ';
             }
         }
 

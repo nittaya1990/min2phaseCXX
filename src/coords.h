@@ -57,6 +57,7 @@ namespace min2phase { namespace coords{
     extern CubieCube CubeSym[info::SYM];
 
     extern int64_t moveCubeSym[info::N_MOVES];//TODO
+    extern int firstMoveSym[info::FULL_SYM];
 
     /**
      * This matrix is used to convert symmetry index into one symmetry for the CubeSym.
@@ -311,6 +312,8 @@ namespace min2phase { namespace coords{
      */
     int8_t getPruning(const int32_t table[], int32_t index);
 
+    int getSkipMoves(long ssym);
+
     /**
      * This method is used to check if a pruning value has the 0 value.
      *
@@ -462,6 +465,9 @@ namespace min2phase { namespace coords{
          * This is used to stored the moves pruning.
          */
         int8_t prun;
+
+        //TODO
+        void calcPruning(bool isPhase1);
 
         /**
          * This is used to set a cube and a max depth. It also check if the

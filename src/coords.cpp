@@ -22,6 +22,7 @@ namespace min2phase { namespace coords {
         CubieCube CubeSym[info::SYM];
 
         int64_t moveCubeSym[info::N_MOVES] = {0};//TODO
+        int firstMoveSym[info::FULL_SYM] = {0};
 
         /**
          * This matrix is used to convert symmetry index into one symmetry for the CubeSym.
@@ -342,6 +343,16 @@ namespace min2phase { namespace coords {
         return table[index >> 3] >> (index << 2) & 0xf; // index << 2 <=> (index & 7) << 2
     }
 
+    int getSkipMoves(long ssym){//TODO
+        int ret = 0;
+        for (int i = 1; (ssym >>= 1) != 0; i++) {
+        if ((ssym & 1) == 1) {
+        ret |= firstMoveSym[i];
+    }
+}
+return ret;
+}
+
     bool hasZero(int32_t val) {
         return ((val - 0x11111111) & ~val & 0x88888888) != 0;
     }
@@ -439,6 +450,16 @@ namespace min2phase { namespace coords {
             }
 
             moveCubeSym[i] = moveCube[i].selfSymmetry();
+            j = i;
+
+            for (int s = 0; s < info::FULL_SYM; s++) {
+                if (SymMove[s % info::SYM][j] < i)
+                    firstMoveSym[s] |= 1 << i;
+
+                if (s % info::SYM == 15) {
+                    j = info::urfMove[2][j];
+                }
+            }
         }
     }
 
@@ -849,6 +870,20 @@ namespace min2phase { namespace coords {
                 }
             }
         }
+    }
+
+    void CoordCube::calcPruning(bool isPhase1) {
+        prun = std::max(
+                std::max(
+                        getPruning(UDSliceTwistPrun,
+                                   twist * info::N_SLICE + UDSliceConj[slice][tsym]),
+                        getPruning(UDSliceFlipPrun,
+                                   flip * info::N_SLICE + UDSliceConj[slice][fsym])),
+                std::max(
+                         getPruning(TwistFlipPrun,
+                                                          (twistc >> 3) << 11 | coords::FlipS2RF[flipc ^ (twistc & 7)]),
+                        getPruning(TwistFlipPrun,
+                                                                twist << 11 | coords::FlipS2RF[flip << 3 | (fsym ^ tsym)])));
     }
 
     bool CoordCube::setWithPrun(const CubieCube &cc, int8_t depth) {

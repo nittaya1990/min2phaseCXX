@@ -12,6 +12,9 @@ namespace min2phase {
         static const int8_t MIN_P1LENGTH_PRE = 7;
 
         coords::CoordCube nodeUD[MAX_PRE_MOVES + 1]{};
+        coords::CoordCube nodeRL[MAX_PRE_MOVES + 1]{};
+        coords::CoordCube nodeFB[MAX_PRE_MOVES + 1]{};
+
         CubieCube urfCubieCube[info::N_BASIC_MOVES];
         coords::CoordCube urfCoordCube[info::N_BASIC_MOVES]{};
         CubieCube phase1Cubie[MAX_PRE_MOVES + 1];
@@ -38,6 +41,7 @@ namespace min2phase {
         int8_t valid1 = 0;
         int8_t preMoveLen = 0;
         int8_t maxPreMoves = 0;
+
         bool allowShorter = false;
 
         Search() = default;
@@ -106,6 +110,10 @@ namespace min2phase {
 
         int8_t phase2(uint16_t edge, int8_t esym, uint16_t corn, int8_t csym, int8_t mid, int8_t maxl, int8_t depth,
                       int8_t lm);
+
+        std::string searchopt();
+
+        int min2phase::Search::phase1opt(coords::CoordCube ud, coords::CoordCube rl, coords::CoordCube fb, long ssym, int maxl, int lm);
     };
 }
 
