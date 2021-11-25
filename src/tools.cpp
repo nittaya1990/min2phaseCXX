@@ -1,6 +1,5 @@
 #include <min2phase/tools.h>
 #include <memory>
-#include <iostream>
 #include "coords.h"
 
 namespace min2phase { namespace tools {
@@ -107,6 +106,7 @@ namespace min2phase { namespace tools {
         return fromScramble(arr.get(), n_moves);
     }
 
+    //gen super flip
     std::string superFlip(){
         return CubieCube::toFaceCube(CubieCube(0, 0, 0, info::N_FLIP-1));
     }

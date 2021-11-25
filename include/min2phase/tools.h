@@ -23,8 +23,20 @@ namespace min2phase { namespace tools {
      */
     std::string randomCube();
 
+    /**
+     * Generate a cube from a scramble.
+     *
+     * @param s : the scramble.
+     * @return  : the scrambled cube.
+     */
     std::string fromScramble(const std::string &s);
 
+    /**
+     * Generate a cube with the super flip: the cube where every edge is
+     * twisted.
+     *
+     * @return  : the cube scrambled with every edge twisted.
+     */
     std::string superFlip();
 } }
 

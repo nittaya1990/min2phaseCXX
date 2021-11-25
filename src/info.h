@@ -308,17 +308,6 @@ namespace min2phase { namespace info {
     void init();
 
     /**
-     * Initialize binomial coefficient.
-     * 
-     * @return : the matrix with precomputed binomial coefficient.
-     */
-    void initCnk();
-    void initStd2ud();
-    void initCkmv2bit();
-
-
-
-    /**
      * In this matrix is stored the precomputed binomial coefficient.
      */
     extern int16_t Cnk[PRECOMPUTED_CNK][PRECOMPUTED_CNK];

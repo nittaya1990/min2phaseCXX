@@ -1,6 +1,17 @@
 #include "coords.h"
 
 namespace min2phase { namespace coords {
+        typedef enum : uint8_t {
+            MCPP_IDX,
+            PCPP_IDX,
+            STP_IDX,
+            SFP_IDX,
+            TFP_IDX,
+            FLIP_TYPE,
+            TWIST_TYPE,
+            EPERM_TYPE
+        }CoordType;
+
         /**
          * In this array are stored the cubes result from each possible move
          * from a solved cube. The motion of the corner and edges moved from
@@ -250,7 +261,110 @@ namespace min2phase { namespace coords {
      */
     static uint16_t SymStatePerm [info::N_PERM_SYM];
 
-    //init all coordinates
+    /**
+     * This method compute the cubes generated from the 18 moves and store them in an array.
+     */
+    void initMove();
+
+    /**
+     * This method compute the cubes generated from the combinations of S_F2, S_U4
+     * and S_LR2.
+     */
+    void initSym();
+
+    /**
+     * This method is used to initialize the coords transformation from symmetry to
+     * raw permutation coordinate.
+     * raw coordinate = transformation array[symmetry]
+     */
+    void initPermSym2Raw();
+
+    /**
+     * This method is used to initialize the coords transformation from symmetry to coordinate.
+     * raw coordinate = transformation array[symmetry].
+     *
+     * @param N_RAW    : the size of raw coordinate.
+     * @param Sym2Raw  : the array where is stored the convertor from symmetry to raw.
+     * @param Raw2Sym  : the array where is stored the convertor from raw to symmetry,
+     * @param SymState : the array containing the symmetry of the coordinate.
+     * @param coord    : the type of coordinate, flip, twist or edge perm.
+     */
+    void initSym2Raw(uint16_t N_RAW, uint16_t Sym2Raw[], uint16_t Raw2Sym[], uint16_t SymState[], const CoordType& coord);
+
+    /**
+     * This method compute the corner and edge permutation
+     * move table table to increase the speed of the algorithm.
+     */
+    void initPermsMove();
+
+    /**
+     * This method compute the UDSliceSorted move table.
+     */
+    void initMPermMoveConj();
+
+    /**
+     * THis method compute the corner comb move table.
+     */
+    void initCombPMoveConj();
+
+    /**
+     * This method compute the edge orientation move table.
+     */
+    void initFlipMove();
+
+    /**
+     * This method is used to compute the corner orientation move table.
+     */
+    void initTwistMove();
+
+    /**
+     * This methos is used to compute the UDSlice move tavble.
+     */
+    void initUDSliceMoveConj();
+
+    /**
+     * This method is used to create a configuration for the pruning compute.
+     */
+    void initAllPrun();
+
+    /**
+     * This method compute the pruning table for every coordinate.
+     *
+     * @param PrunTable     : the array to store the pruning table.
+     * @param RawMove1      : the matrix of raw moves for phase 2
+     * @param RawConj1      : the matrix of table for raw symmetry in phase 2.
+     * @param SymMoveVect1  : the matrix of raw moves coordinate for phase 2
+     * @param RawMove2      : the matrix of raw moves for phase 1.
+     * @param RawConj2      : the matrix of table for raw symmetry in phase 1.
+     * @param SymMoveVect2  : the matrix of raw moves coordinate for phase 1 .
+     * @param SymState      : the array of symmetries.
+     * @param PrunFlag      : the flag used to generate the pruning.
+     * @param PrunTableSize : the size of the PrunFlag.
+     * @param type          : the type of pruning computed, you determinate if from the type of coordinate.
+     */
+    void initRawSymPrun(int32_t PrunTable[],
+                        uint8_t RawMove1[][info::N_MOVES2], uint8_t RawConj1[][info::SYM], uint16_t SymMoveVect1[][info::N_MOVES2],
+                        uint16_t RawMove2[][info::N_MOVES], uint16_t RawConj2[][info::SYM_CLASSES], uint16_t SymMoveVect2[][info::N_MOVES],
+                        const uint16_t SymState[], int32_t PrunFlag, int32_t PrunTableSize, const CoordType& type);
+
+    /**
+     * This method is used to check if a pruning value has the 0 value.
+     *
+     * @param val : the pruning value to check.
+     * @return    : true if has 0, false if not.
+     */
+    bool hasZero(int32_t val);
+
+    /**
+     * This method is used to make a rotation of 3 cubes.
+     *
+     * @param a : the cube where will stored b.
+     * @param b : the cube where will stored c.
+     * @param d : the cube where will stored a.
+     */
+    void rotateCube(CubieCube &a, CubieCube &b, CubieCube &d);
+
+        //init all coordinates
     void init() {
         urf.setValues(2531, 1373, 67026819, 1367);
         urfInv.setValues(2089, 1906, 322752913, 2040);
@@ -342,16 +456,6 @@ namespace min2phase { namespace coords {
     int8_t getPruning(const int32_t table[], int32_t index) {
         return table[index >> 3] >> (index << 2) & 0xf; // index << 2 <=> (index & 7) << 2
     }
-
-    int getSkipMoves(long ssym){//TODO
-        int ret = 0;
-        for (int i = 1; (ssym >>= 1) != 0; i++) {
-        if ((ssym & 1) == 1) {
-        ret |= firstMoveSym[i];
-    }
-}
-return ret;
-}
 
     bool hasZero(int32_t val) {
         return ((val - 0x11111111) & ~val & 0x88888888) != 0;

@@ -6,13 +6,11 @@ namespace min2phase { namespace info {
     int8_t std2ud[N_MOVES] = {0};
     int16_t ckmv2bit[N_MOVES2+1] = {0};
 
-    void init(){
-        initCnk();
-        initStd2ud();
-        initCkmv2bit();
-    }
-
-
+    /**
+     * Initialize binomial coefficient.
+     *
+     * @return : the matrix with precomputed binomial coefficient.
+     */
     void initCnk() {
         uint8_t i, j;
 
@@ -44,5 +42,11 @@ namespace min2phase { namespace info {
         }
 
         ckmv2bit[10] = 0;
+    }
+
+    void init(){
+        initCnk();
+        initStd2ud();
+        initCkmv2bit();
     }
 } }
