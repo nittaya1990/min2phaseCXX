@@ -355,15 +355,6 @@ namespace min2phase { namespace coords {
      */
     bool hasZero(int32_t val);
 
-    /**
-     * This method is used to make a rotation of 3 cubes.
-     *
-     * @param a : the cube where will stored b.
-     * @param b : the cube where will stored c.
-     * @param d : the cube where will stored a.
-     */
-    void rotateCube(CubieCube &a, CubieCube &b, CubieCube &d);
-
         //init all coordinates
     void init() {
         urf.setValues(2531, 1373, 67026819, 1367);
@@ -461,15 +452,6 @@ namespace min2phase { namespace coords {
         return ((val - 0x11111111) & ~val & 0x88888888) != 0;
     }
 
-    //rotation a b c
-    void rotateCube(CubieCube &a, CubieCube &b, CubieCube &d) {
-        CubieCube &tmp = a;
-
-        a = b;
-        b = d;
-        d = tmp;
-    }
-
     //init basic 18 moves
     void initMove() {
         const int16_t cPermSon[info::N_BASIC_MOVES] = {15120, 21021, 8064, 9, 1230, 224};
@@ -508,18 +490,18 @@ namespace min2phase { namespace coords {
 
             CubieCube::CornMultFull(c, u4, d);
             CubieCube::EdgeMult(c, u4, d);
-            rotateCube(t, d, c);
+            t = d; d = c; c = t;
 
             if (i % 4 == 3) {
                 CubieCube::CornMultFull(c, lr2, d);
                 CubieCube::EdgeMult(c, lr2, d);
-                rotateCube(t, d, c);
+                t = d; d = c; c = t;
             }
 
             if (i % 8 == 7) {
                 CubieCube::CornMultFull(c, f2, d);
                 CubieCube::EdgeMult(c, f2, d);
-                rotateCube(t, d, c);
+                t = d; d = c; c = t;
             }
         }
 
