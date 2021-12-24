@@ -69,7 +69,7 @@ int main(int argc, char* argv[]){
     getline(processordNameFile, processName);
     processordNameFile.close();
     system("rm processorName");
-    cout << "Processor used (OS Linux): " << processName.substr(13, processName.size()) << endl << endl;
+    cout << "Processor used (OS Linux): " << processName.substr(processName.find(": ")+2, processName.size()) << endl << endl;
 
 #elif defined(_WIN32)
 

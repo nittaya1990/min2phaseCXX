@@ -165,9 +165,6 @@ namespace min2phase { namespace coords {
 
         //init all coordinates
     void init() {
-        if(isInit())
-            return;
-
         coords.urf.setCoords(2531, 1373, 67026819, 1367);
         coords.urfInv.setCoords(2089, 1906, 322752913, 2040);
 
