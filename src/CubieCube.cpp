@@ -1,15 +1,16 @@
 #include "coords.h"
 #include <min2phase/min2phase.h>
 #include <memory>
+#include <cstring>
 
 namespace min2phase {
 
     CubieCube::CubieCube(uint16_t cPerm, int16_t cOri, int32_t ePerm, int16_t eOri) {
-        setValues(cPerm, cOri, ePerm, eOri);
+        setCoords(cPerm, cOri, ePerm, eOri);
     }
 
     //set che coordinates of the cube
-    void CubieCube::setValues(uint16_t cPerm, int16_t cOri, int32_t ePerm, int16_t eOri) {
+    void CubieCube::setCoords(uint16_t cPerm, int16_t cOri, int32_t ePerm, int16_t eOri) {
         setCPerm(cPerm);
         setTwist(cOri);
         setNPerm(edges, ePerm, info::NUMBER_EDGES, true);
@@ -17,23 +18,13 @@ namespace min2phase {
     }
 
     //set the cube from an existing one and coords
-    void CubieCube::setValues(const CubieCube &cube) {
-        copy(cube);
-    }
-
-    //copy a cube into the new one
     void CubieCube::copy(const CubieCube &cube) {
-        uint8_t i;
-
-        for (i = 0; i < info::NUMBER_EDGES; i++) {
-            if (i < info::NUMBER_CORNER)
-                this->corners[i] = cube.corners[i];
-            this->edges[i] = cube.edges[i];
-        }
+        std::memcpy(this->corners, cube.corners, sizeof(corners));
+        std::memcpy(this->edges, cube.edges, sizeof(edges));
     }
 
     //inverse cube
-    void CubieCube::invCubieCube() {
+    void CubieCube::inv() {
         int8_t edge, corner;
         CubieCube temps;
 
@@ -50,13 +41,13 @@ namespace min2phase {
     void CubieCube::URFConjugate() {
         CubieCube temps;
 
-        CornMult(coords::urfInv, *this, temps);
-        CornMult(temps, coords::urf, *this);
-        EdgeMult(coords::urfInv, *this, temps);
-        EdgeMult(temps, coords::urf, *this);
+        cornMult(coords::coords.urfInv, *this, temps);
+        cornMult(temps, coords::coords.urf, *this);
+        edgeMult(coords::coords.urfInv, *this, temps);
+        edgeMult(temps, coords::coords.urf, *this);
     }
 
-    int64_t CubieCube::selfSymmetry() const {
+    int64_t CubieCube::selfSym() const {
         CubieCube c(*this);
         CubieCube d;
         int8_t urfInv;
@@ -69,10 +60,10 @@ namespace min2phase {
 
             if (cperm == cpermx) {
                 for (i = 0; i < info::SYM; i++) {
-                    coords::CornConjugate(c, coords::SymMultInv[0][i], d);
+                    coords::cornConjugate(c, coords::coords.SymMultInv[0][i], d);
 
                     if (coords::isSameCube(d.corners, corners, false)) {
-                        coords::EdgeConjugate(c, coords::SymMultInv[0][i], d);
+                        coords::edgeConjugate(c, coords::coords.SymMultInv[0][i], d);
 
                         if (coords::isSameCube(d.edges, edges, true))
                             symType |= int64_t(1) << std::min(int64_t(urfInv << 4 | i), int64_t (info::FULL_SYM));
@@ -83,14 +74,14 @@ namespace min2phase {
             c.URFConjugate();
 
             if (urfInv % 3 == 2)
-                c.invCubieCube();
+                c.inv();
         }
 
         return symType;
     }
 
     //check if the cube is possible
-    int8_t CubieCube::verify() const {
+    info::Errors CubieCube::check() const {
         uint8_t i;
         uint16_t sum = 0;
         uint16_t mask = 0;
@@ -206,13 +197,13 @@ namespace min2phase {
     }
 
     // a * b edge only
-    void CubieCube::EdgeMult(const CubieCube &a, const CubieCube &b, CubieCube &prod) {
+    void CubieCube::edgeMult(const CubieCube &a, const CubieCube &b, CubieCube &prod) {
         for (int8_t edge = 0; edge < info::NUMBER_EDGES; edge++)
             prod.edges[edge] = a.edges[b.edges[edge] >> 1] ^ (b.edges[edge] & 1);
     }
 
     //a * b corner only
-    void CubieCube::CornMult(const CubieCube &a, const CubieCube &b, CubieCube &prod) {
+    void CubieCube::cornMult(const CubieCube &a, const CubieCube &b, CubieCube &prod) {
         int8_t oriA, oriB, corn;
 
         for (corn = 0; corn < info::NUMBER_CORNER; corn++) {
@@ -223,7 +214,7 @@ namespace min2phase {
     }
 
     //a * b corner with mirrored cases
-    void CubieCube::CornMultFull(const CubieCube &a, const CubieCube &b, CubieCube &prod) {
+    void CubieCube::cornMultFull(const CubieCube &a, const CubieCube &b, CubieCube &prod) {
         int8_t oriA, oriB, corn, ori;
 
         for (corn = 0; corn < info::NUMBER_CORNER; corn++) {
@@ -360,7 +351,7 @@ namespace min2phase {
 
     //get edge orientation symmetry
     int16_t CubieCube::getFlipSym() const {
-        return coords::FlipR2S[getFlip()];
+        return coords::coords.FlipR2S[getFlip()];
     }
 
     //get corner orientation
@@ -390,7 +381,7 @@ namespace min2phase {
 
     //get corner orientation symmetry
     int16_t CubieCube::getTwistSym() const {
-        return coords::TwistR2S[getTwist()];
+        return coords::coords.TwistR2S[getTwist()];
     }
 
     //get udslice coord
@@ -417,7 +408,7 @@ namespace min2phase {
 
     //get corner permutation symmetry
     uint16_t CubieCube::getCPermSym() const {
-        return coords::ESym2CSym(coords::EPermR2S[getCPerm()]);
+        return coords::ESym2CSym(coords::coords.EPermR2S[getCPerm()]);
     }
 
     //get edge permutation
@@ -432,7 +423,7 @@ namespace min2phase {
 
     //get edge permutation symmetry
     uint16_t CubieCube::getEPermSym() const {
-        return coords::EPermR2S[getEPerm()];
+        return coords::coords.EPermR2S[getEPerm()];
     }
 
     //get udslicesorted permutation
@@ -513,7 +504,8 @@ namespace min2phase {
 
     //compute the string
     std::string CubieCube::OutputFormat::toString() {
-        std::unique_ptr<char> solution(new char[1+length*3 +((format & USE_SEPARATOR) != 0? 2: 0)+((format & APPEND_LENGTH) != 0? 5: 0)]);
+        std::string solutionStr;
+        char* solution = new char[1+length*3 +((format & USE_SEPARATOR) != 0? 2: 0)+((format & APPEND_LENGTH) != 0? 5: 0)];
         uint8_t solutionPos;
         int8_t urf = (format & INVERSE_SOLUTION) != 0 ? (urfIdx + info::N_GROUP_MOVES) % 6 : urfIdx;
         const bool useInv = urf < info::N_GROUP_MOVES;
@@ -523,34 +515,38 @@ namespace min2phase {
 
         for (s = useInv? 0: length-1; useInv? s < length: s >= 0; useInv? s++: s--) {
             if (useInv && s == depth1 && (format & USE_SEPARATOR) != 0){
-                solution.get()[solutionPos++] = '.';
-                solution.get()[solutionPos++] = ' ';
+                solution[solutionPos++] = '.';
+                solution[solutionPos++] = ' ';
             }
 
-            solution.get()[solutionPos++] = move2str[info::urfMove[urf][moves[s]]][0];
-            solution.get()[solutionPos++] = move2str[info::urfMove[urf][moves[s]]][1];
+            solution[solutionPos++] = move2str[info::urfMove[urf][moves[s]]][0];
+            solution[solutionPos++] = move2str[info::urfMove[urf][moves[s]]][1];
 
-            solution.get()[solutionPos++] = ' ';
+            solution[solutionPos++] = ' ';
 
             if (!useInv && (format & USE_SEPARATOR) != 0 && s == depth1){
-                solution.get()[solutionPos++] = '.';
-                solution.get()[solutionPos++] = ' ';
+                solution[solutionPos++] = '.';
+                solution[solutionPos++] = ' ';
             }
         }
 
         if ((format & APPEND_LENGTH) != 0){
-            solution.get()[solutionPos++] = '(';
+            solution[solutionPos++] = '(';
 
             if(length/10 != 0)
-                solution.get()[solutionPos++] = '0'+length/10;
+                solution[solutionPos++] = '0'+length/10;
 
-            solution.get()[solutionPos++] = '0'+(length%10);
-            solution.get()[solutionPos++] = 'f';
-            solution.get()[solutionPos++] = ')';
+            solution[solutionPos++] = '0'+(length%10);
+            solution[solutionPos++] = 'f';
+            solution[solutionPos++] = ')';
         }
 
-        solution.get()[solutionPos] = '\0';
+        solution[solutionPos] = '\0';
 
-        return std::string(solution.get());;
+        solutionStr = solution;
+
+        delete[] solution;
+
+        return solutionStr;
     }
 }

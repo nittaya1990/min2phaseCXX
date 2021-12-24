@@ -35,6 +35,22 @@ namespace min2phase{
     void init();
 
     /**
+     * Write all the coordinates into a binary file.
+     *
+     * @param name      : the name and path of the file.
+     * @return          : true if the file was written, false if not.
+     */
+    bool writeFile(const std::string& name);
+
+    /**
+     * Read all the coordinates from a binary file.
+     *
+     * @param name      : the name and path of the file.
+     * @return          : true if the file was red, false if not.
+     */
+    bool readFile(const std::string& name);
+
+    /**
      * This is used to solve the cube. It has many configuration in base of the
      * power of the machine or the memory. Less the max depth is, more the time
      * to solve the cube is used, is suggested to use from 20 to 31 because it

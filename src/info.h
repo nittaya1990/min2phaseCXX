@@ -221,18 +221,27 @@ namespace min2phase { namespace info {
         B = 5
     }Faces;
 
-
     typedef enum : int8_t {
         NO_ERROR = 0, ///There is no error solving the cube.
+#define NO_ERROR NO_ERROR
         MALFORMED_STRING = 1, ///The input string is not correct.
+#define MALFORMED_STRING MALFORMED_STRING
         MISSING_EDGE = 2, ///An edge is missing in the edge permutation.
+#define MISSING_EDGE MISSING_EDGE
         TWISTED_EDGE = 3, ///An edge is flipped in the wrong way.
+#define TWISTED_EDGE TWISTED_EDGE
         MISSING_CORNER = 4, ///A corner is missing in the corner permutation.
+#define MISSING_CORNER MISSING_CORNER
         TWISTED_CORNER = 5, ///A corner is rotated in the wrong way.
+#define TWISTED_CORNER TWISTED_CORNER
         PARITY_ERROR = 6, ///The parity of coordinates is wrong.
-        SHORT_DEPTH = 7, ///The depth assigned for the algorithm is too int16_t.
+#define PARITY_ERROR PARITY_ERROR
+        SHORT_DEPTH = 7, ///The depth assigned for the algorithm is too short.
+#define SHORT_DEPTH SHORT_DEPTH
         PROBE_LIMIT = 8, ///The limit of cube to explore is too low.
+#define PROBE_LIMIT PROBE_LIMIT
         MISSING_COORDS = 9 ///The coordinates are not initialized.
+#define MISSING_COORDS MISSING_COORDS
     }Errors;
 
     /**
@@ -273,23 +282,23 @@ namespace min2phase { namespace info {
     };
 
     const int8_t ud2std[N_MOVES] = {min2phase::info::UX1,
-                             min2phase::info::UX2,
-                             min2phase::info::UX3,
-                             min2phase::info::RX2,
-                             min2phase::info::FX2,
-                             min2phase::info::DX1,
-                             min2phase::info::DX2,
-                             min2phase::info::DX3,
-                             min2phase::info::LX2,
-                             min2phase::info::BX2,
-                             min2phase::info::RX1,
-                             min2phase::info::RX3,
-                             min2phase::info::FX1,
-                             min2phase::info::FX3,
-                             min2phase::info::LX1,
-                             min2phase::info::LX3,
-                             min2phase::info::BX1,
-                             min2phase::info::BX3};
+                                     min2phase::info::UX2,
+                                     min2phase::info::UX3,
+                                     min2phase::info::RX2,
+                                     min2phase::info::FX2,
+                                     min2phase::info::DX1,
+                                     min2phase::info::DX2,
+                                     min2phase::info::DX3,
+                                     min2phase::info::LX2,
+                                     min2phase::info::BX2,
+                                     min2phase::info::RX1,
+                                     min2phase::info::RX3,
+                                     min2phase::info::FX1,
+                                     min2phase::info::FX3,
+                                     min2phase::info::LX1,
+                                     min2phase::info::LX3,
+                                     min2phase::info::BX1,
+                                     min2phase::info::BX3};
 
 
     /**
@@ -304,15 +313,18 @@ namespace min2phase { namespace info {
             {5, 4, 3, 8, 7, 6, 2, 1, 0, 14, 13, 12, 17, 16, 15, 11, 10, 9}
     };
 
-
-    void init();
-
     /**
      * In this matrix is stored the precomputed binomial coefficient.
      */
     extern int16_t Cnk[PRECOMPUTED_CNK][PRECOMPUTED_CNK];
     extern int8_t std2ud[N_MOVES];
     extern int16_t ckmv2bit[N_MOVES2 + 1];
+
+    /**
+     * Init all the precomputed mathematical computation. For
+     * example the binomial coefficient.
+     */
+    void init();
 } }
 
 #endif //MIN2PHASE_INFO_H

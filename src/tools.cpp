@@ -30,7 +30,7 @@ namespace min2phase { namespace tools {
             edgePerm = std::rand() % (info::FULL_E_PERM + 1);
         } while (CubieCube::getNParity(edgePerm, info::NUMBER_EDGES) != parity);
 
-        cube.setValues(cornerPerm, cornerOri, edgePerm, edgeOri);
+        cube.setCoords(cornerPerm, cornerOri, edgePerm, edgeOri);
 
         return CubieCube::toFaceCube(cube);
     }
@@ -43,8 +43,8 @@ namespace min2phase { namespace tools {
         CubieCube tmp;
 
         for (i = 0; i < length; i++) {
-            CubieCube::CornMult(c1, coords::moveCube[scramble[i]], c2);
-            CubieCube::EdgeMult(c1, coords::moveCube[scramble[i]], c2);
+            CubieCube::cornMult(c1, coords::coords.moveCube[scramble[i]], c2);
+            CubieCube::edgeMult(c1, coords::coords.moveCube[scramble[i]], c2);
             tmp = c1;
             c1 = c2;
             c2 = tmp;

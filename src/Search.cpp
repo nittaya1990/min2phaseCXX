@@ -67,12 +67,12 @@ int8_t min2phase::Search::verify(const std::string& facelets) {
 
     CubieCube::toCubieCube(cube, solveCube);
 
-    return solveCube.verify();
+    return solveCube.check();
 }
 
 void min2phase::Search::initSearch() {
     int8_t i;
-    selfSym = solveCube.selfSymmetry();
+    selfSym = solveCube.selfSym();
     conjMask |= (selfSym >> 16 & 0xffff) != 0 ? 0x12 : 0;
     conjMask |= (selfSym >> 32 & 0xffff) != 0 ? 0x24 : 0;
     conjMask |= (selfSym >> 48 & 0xffff) != 0 ? 0x38 : 0;
@@ -85,7 +85,7 @@ void min2phase::Search::initSearch() {
         solveCube.URFConjugate();
 
         if (i%3 == 2)
-            solveCube.invCubieCube();
+            solveCube.inv();
     }
 }
 
@@ -155,10 +155,10 @@ int8_t min2phase::Search::phase1PreMoves(int8_t maxl, int8_t lm, CubieCube* cc, 
         if ((skipMoves & 1 << m) != 0)
             continue;
 
-        CubieCube::CornMult(coords::moveCube[m], *cc, preMoveCubes[maxl]);
-        CubieCube::EdgeMult(coords::moveCube[m], *cc, preMoveCubes[maxl]);
+        CubieCube::cornMult(coords::coords.moveCube[m], *cc, preMoveCubes[maxl]);
+        CubieCube::edgeMult(coords::coords.moveCube[m], *cc, preMoveCubes[maxl]);
         preMoves[maxPreMoves - maxl] = m;
-        ret = phase1PreMoves(maxl - 1, m, &preMoveCubes[maxl], ssym & (int32_t) coords::moveCubeSym[m]);
+        ret = phase1PreMoves(maxl - 1, m, &preMoveCubes[maxl], ssym & (int32_t) coords::coords.moveCubeSym[m]);
 
         if (ret == 0)
             return 0;
@@ -202,7 +202,7 @@ int8_t min2phase::Search::phase1(coords::CoordCube* node, uint16_t ssym, int8_t 
 
             move[depth1 - maxl] = m;
             valid1 = std::min(valid1, int8_t(depth1 - maxl));
-            ret = phase1(&nodeUD[maxl], ssym & (int32_t) coords::moveCubeSym[m], maxl - 1, axis);
+            ret = phase1(&nodeUD[maxl], ssym & (int32_t) coords::coords.moveCubeSym[m], maxl - 1, axis);
 
             if (ret == 0)
                 return 0;
@@ -226,8 +226,8 @@ int8_t min2phase::Search::initPhase2Pre() {
     ++probe;
 
     for (i = valid1; i < depth1; i++) {
-        CubieCube::CornMult(phase1Cubie[i], coords::moveCube[move[i]], phase1Cubie[i + 1]);
-        CubieCube::EdgeMult(phase1Cubie[i], coords::moveCube[move[i]], phase1Cubie[i + 1]);
+        CubieCube::cornMult(phase1Cubie[i], coords::coords.moveCube[move[i]], phase1Cubie[i + 1]);
+        CubieCube::edgeMult(phase1Cubie[i], coords::coords.moveCube[move[i]], phase1Cubie[i + 1]);
     }
 
     valid1 = depth1;
@@ -270,12 +270,12 @@ int8_t min2phase::Search::initPhase2Pre() {
             m = info::std2ud[lastMove / 3 * 3 + 1];
             move[depth1 - 1] = info::ud2std[m] * 2 - move[depth1 - 1];
 
-            p2mid = coords::MPermMove[p2mid][m];
-            p2corn = coords::CPermMove[p2corn][coords::SymMoveUD[p2csym][m]];
-            p2csym = coords::SymMult[p2corn & 0xf][p2csym];
+            p2mid = coords::coords.MPermMove[p2mid][m];
+            p2corn = coords::coords.CPermMove[p2corn][coords::coords.SymMoveUD[p2csym][m]];
+            p2csym = coords::coords.SymMult[p2corn & 0xf][p2csym];
             p2corn >>= 4;
-            p2edge = coords::EPermMove[p2edge][coords::SymMoveUD[p2esym][m]];
-            p2esym = coords::SymMult[p2edge & 0xf][p2esym];
+            p2edge = coords::coords.EPermMove[p2edge][coords::coords.SymMoveUD[p2esym][m]];
+            p2esym = coords::coords.SymMult[p2edge & 0xf][p2esym];
             p2edge >>= 4;
             corni = coords::getPermSymInv(p2corn, p2csym, true);
             edgei = coords::getPermSymInv(p2edge, p2esym, false);
@@ -284,14 +284,14 @@ int8_t min2phase::Search::initPhase2Pre() {
             m = info::std2ud[lastPre / 3 * 3 + 1];
             preMoves[preMoveLen - 1] = info::ud2std[m] * 2 - preMoves[preMoveLen - 1];
 
-            p2mid = coords::MPermInv[coords::MPermMove[coords::MPermInv[p2mid]][m]];
-            p2corn = coords::CPermMove[corni >> 4][coords::SymMoveUD[corni & 0xf][m]];
-            corni = p2corn & ~0xf | coords::SymMult[p2corn & 0xf][corni & 0xf];
+            p2mid = coords::coords.MPermInv[coords::coords.MPermMove[coords::coords.MPermInv[p2mid]][m]];
+            p2corn = coords::coords.CPermMove[corni >> 4][coords::coords.SymMoveUD[corni & 0xf][m]];
+            corni = p2corn & ~0xf | coords::coords.SymMult[p2corn & 0xf][corni & 0xf];
             p2corn = coords::getPermSymInv(corni >> 4, corni & 0xf, true);
             p2csym = p2corn & 0xf;
             p2corn >>= 4;
-            p2edge = coords::EPermMove[edgei >> 4][coords::SymMoveUD[edgei & 0xf][m]];
-            edgei = p2edge & ~0xf | coords::SymMult[p2edge & 0xf][edgei & 0xf];
+            p2edge = coords::coords.EPermMove[edgei >> 4][coords::coords.SymMoveUD[edgei & 0xf][m]];
+            edgei = p2edge & ~0xf | coords::coords.SymMult[p2edge & 0xf][edgei & 0xf];
             p2edge = coords::getPermSymInv(edgei >> 4, edgei & 0xf, false);
             p2esym = p2edge & 0xf;
             p2edge >>= 4;
@@ -312,13 +312,13 @@ int8_t min2phase::Search::initPhase2(uint16_t p2corn, int8_t p2csym, uint16_t p2
     int8_t ret;
 
     prun = std::max(
-            coords::getPruning(coords::EPermCCombPPrun,
-                               (edgei >> 4) * info::N_COMB + coords::CCombPConj[coords::Perm2CombP[corni >> 4] & 0xff][coords::SymMultInv[edgei & 0xf][corni & 0xf]]),
+            coords::getPruning(coords::coords.EPermCCombPPrun,
+                               (edgei >> 4) * info::N_COMB + coords::coords.CCombPConj[coords::coords.Perm2CombP[corni >> 4] & 0xff][coords::coords.SymMultInv[edgei & 0xf][corni & 0xf]]),
             std::max(
-                    coords::getPruning(coords::EPermCCombPPrun,
-                                       p2edge * info::N_COMB + coords::CCombPConj[coords::Perm2CombP[p2corn] & 0xff][coords::SymMultInv[p2esym][p2csym]]),
-                    coords::getPruning(coords::MCPermPrun,
-                                       p2corn * info::N_MPERM + coords::MPermConj[p2mid][p2csym])));
+                    coords::getPruning(coords::coords.EPermCCombPPrun,
+                                       p2edge * info::N_COMB + coords::coords.CCombPConj[coords::coords.Perm2CombP[p2corn] & 0xff][coords::coords.SymMultInv[p2esym][p2csym]]),
+                    coords::getPruning(coords::coords.MCPermPrun,
+                                       p2corn * info::N_MPERM + coords::coords.MPermConj[p2mid][p2csym])));
 
     if (prun > maxDep2)
         return prun - maxDep2;
@@ -371,18 +371,18 @@ int8_t min2phase::Search::phase2(uint16_t edge, int8_t esym, uint16_t corn, int8
             continue;
         }
 
-        midx = coords::MPermMove[mid][m];
-        cornx = coords::CPermMove[corn][coords::SymMoveUD[csym][m]];
-        csymx = coords::SymMult[cornx & 0xf][csym];
+        midx = coords::coords.MPermMove[mid][m];
+        cornx = coords::coords.CPermMove[corn][coords::coords.SymMoveUD[csym][m]];
+        csymx = coords::coords.SymMult[cornx & 0xf][csym];
         cornx >>= 4;
-        edgex = coords::EPermMove[edge][coords::SymMoveUD[esym][m]];
-        int8_t esymx = coords::SymMult[edgex & 0xf][esym];
+        edgex = coords::coords.EPermMove[edge][coords::coords.SymMoveUD[esym][m]];
+        int8_t esymx = coords::coords.SymMult[edgex & 0xf][esym];
         edgex >>= 4;
         edgei = coords::getPermSymInv(edgex, esymx, false);
         corni = coords::getPermSymInv(cornx, csymx, true);
 
-        prun = coords::getPruning(coords::EPermCCombPPrun,
-                                  (edgei >> 4) * info::N_COMB + coords::CCombPConj[coords::Perm2CombP[corni >> 4] & 0xff][coords::SymMultInv[edgei & 0xf][corni & 0xf]]);
+        prun = coords::getPruning(coords::coords.EPermCCombPPrun,
+                                  (edgei >> 4) * info::N_COMB + coords::coords.CCombPConj[coords::coords.Perm2CombP[corni >> 4] & 0xff][coords::coords.SymMultInv[edgei & 0xf][corni & 0xf]]);
         if (prun > maxl + 1)
             return maxl - prun + 1;
         else if (prun >= maxl) {
@@ -391,10 +391,10 @@ int8_t min2phase::Search::phase2(uint16_t edge, int8_t esym, uint16_t corn, int8
         }
 
         prun = std::max(
-                coords::getPruning(coords::MCPermPrun,
-                                   cornx * info::N_MPERM + coords::MPermConj[midx][csymx]),
-                coords::getPruning(coords::EPermCCombPPrun,
-                                   edgex * info::N_COMB + coords::CCombPConj[coords::Perm2CombP[cornx] & 0xff][coords::SymMultInv[esymx][csymx]]));
+                coords::getPruning(coords::coords.MCPermPrun,
+                                   cornx * info::N_MPERM + coords::coords.MPermConj[midx][csymx]),
+                coords::getPruning(coords::coords.EPermCCombPPrun,
+                                   edgex * info::N_COMB + coords::coords.CCombPConj[coords::coords.Perm2CombP[cornx] & 0xff][coords::coords.SymMultInv[esymx][csymx]]));
 
         if(prun >= maxl) {
             m += 0x42 >> m & 3 & (maxl - prun);
@@ -425,7 +425,7 @@ std::string min2phase::Search::searchOpt() {
     coords::CoordCube fb{};
 
     for (uint8_t i = 0; i < info::N_BASIC_MOVES; i++) {
-        urfCoordCube[i].calcPruning(false);
+        urfCoordCube[i].calcPrun(false);
 
         if (i < info::N_BASIC_MOVES/2)
             maxprun1 = std::max(maxprun1, urfCoordCube[i].prun);
@@ -502,7 +502,7 @@ int8_t min2phase::Search::phase1opt(coords::CoordCube ud, coords::CoordCube rl, 
             move[length1 - maxl] = m;
             valid1 = std::min((int8_t) valid1, (int8_t)(length1 - maxl));
 
-            if (phase1opt(nodeUD[maxl], nodeRL[maxl], nodeFB[maxl], ssym & coords::moveCubeSym[m], maxl - 1, axis) == 0)
+            if (phase1opt(nodeUD[maxl], nodeRL[maxl], nodeFB[maxl], ssym & coords::coords.moveCubeSym[m], maxl - 1, axis) == 0)
                 return 0;
         }
     }
