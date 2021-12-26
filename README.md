@@ -28,5 +28,5 @@ You can also read the coordinates from a file, see [min2phase.h](include/min2pha
 
 ```bash
 make
-g++ -I include/ example.cpp -L. -lmin2phase -o example
+g++ -I include/ example.cpp -L. -lmin2phase -o example -Wl,-rpath,.
 ```
