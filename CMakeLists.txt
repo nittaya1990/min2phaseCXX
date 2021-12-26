@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 include_directories(include)
 
-add_executable(min2phase
+add_executable(example
         src/info.h
         src/CubieCube.h
         src/coords.h
@@ -18,7 +18,7 @@ add_executable(min2phase
         src/tools.cpp
         src/min2phase.cpp
         src/tests.cpp
-        main.cpp )
+        example.cpp)
 
 add_executable(benchmark
         src/info.h
