@@ -95,7 +95,7 @@ namespace min2phase {
             return info::MISSING_EDGE;
 
         if (sum != 0)
-            return info::TWISTED_EDGE;
+            return info::FLIPPED_EDGE;
 
         mask = 0;
         sum = 0;

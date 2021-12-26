@@ -6,6 +6,8 @@
 #include <iomanip>
 #include <min2phase/min2phase.h>
 #include "coords.h"
+#include "Search.h"
+#include "tests.h"
 
 namespace min2phase { namespace tools {
 
@@ -261,5 +263,21 @@ namespace min2phase { namespace tools {
             cout << "|" << fixed << setprecision(1) << setw(5) << avgTime << " ms   |";
             cout << fixed << setprecision(1) << setw(7) << (int32_t) maxDepth << "     |\n";
         }
+    }
+
+    //check integrity
+    int8_t verify(const std::string& facelets){
+        Search s;
+
+        return s.verify(facelets);
+    }
+
+    //tests
+    void testAlgorithm(){
+        min2phase::init();
+
+        tests::testInput();
+        tests::testSearchError();
+        tests::testSearch();
     }
 } }

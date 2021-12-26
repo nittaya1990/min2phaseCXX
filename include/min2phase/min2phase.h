@@ -1,3 +1,17 @@
+/**
+ * In this file there are all the functions used to solver a Rubik's cube.
+ * You can configure the solver in base the speed you need. You can
+ * define the limit of moves to use, the max cubes to search and format the
+ * output string.
+ * The result of this algorithm is a string that contains the moves necessary
+ * to solve the input cube. The output can be formatted. It can add a separator from
+ * phase 1 and phase 2, the inverse solution and the number of moves used.
+ * This algorithm can also find the optimal solution for a cube. To use it, add the
+ * optimal solution flag to the solver input.
+ * This algorithm is an implementation of the Kociemba's 2 phase algorithm (http://kociemba.org/)
+ * and a fork of the min2phase Java algorithm (https://github.com/cs0x7f/min2phase/).
+ */
+
 #ifndef MIN2PHASE
 #define MIN2PHASE 1
 

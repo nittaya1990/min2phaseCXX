@@ -29,12 +29,10 @@ int8_t min2phase::Search::verify(const std::string& facelets) {
     char centers[info::FACES];
     int8_t cube [info::N_PLATES];
     int32_t count = 0x000000;
-    int8_t i, j, len;
+    int8_t i, j;
     bool notQuit;
 
-    for(len = 0; facelets[len] != '\0'; len++);
-
-    if(len != info::N_PLATES)
+    if(facelets.length() != info::N_PLATES)
         return info::MALFORMED_STRING;
 
     centers[0] = facelets[info::U5];

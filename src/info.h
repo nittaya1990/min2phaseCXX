@@ -1,3 +1,10 @@
+/**
+ * This file contains all the general constant of the algorithm.
+ * For example the number of moves, corners or edges.
+ * It has also precomputed binomial coefficient to increase the
+ * speed of the algorithm.
+ */
+
 #ifndef MIN2PHASE_INFO_H
 #define MIN2PHASE_INFO_H 1
 
@@ -228,8 +235,8 @@ namespace min2phase { namespace info {
 #define MALFORMED_STRING MALFORMED_STRING
         MISSING_EDGE = 2, ///An edge is missing in the edge permutation.
 #define MISSING_EDGE MISSING_EDGE
-        TWISTED_EDGE = 3, ///An edge is flipped in the wrong way.
-#define TWISTED_EDGE TWISTED_EDGE
+        FLIPPED_EDGE = 3, ///An edge is flipped in the wrong way.
+#define FLIPPED_EDGE FLIPPED_EDGE
         MISSING_CORNER = 4, ///A corner is missing in the corner permutation.
 #define MISSING_CORNER MISSING_CORNER
         TWISTED_CORNER = 5, ///A corner is rotated in the wrong way.

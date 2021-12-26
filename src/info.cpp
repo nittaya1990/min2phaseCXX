@@ -2,6 +2,7 @@
 
 namespace min2phase { namespace info {
 
+    //precomputed binomial coefficient
     int16_t Cnk[PRECOMPUTED_CNK][PRECOMPUTED_CNK] = {0};
     int8_t std2ud[N_MOVES] = {0};
     int16_t ckmv2bit[N_MOVES2+1] = {0};

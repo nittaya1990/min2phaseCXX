@@ -10,12 +10,14 @@ add_executable(min2phase
         src/CubieCube.h
         src/coords.h
         src/Search.h
+        src/tests.h
         src/info.cpp
         src/CubieCube.cpp
         src/coords.cpp
         src/Search.cpp
         src/tools.cpp
         src/min2phase.cpp
+        src/tests.cpp
         main.cpp )
 
 add_executable(benchmark
@@ -23,10 +25,28 @@ add_executable(benchmark
         src/CubieCube.h
         src/coords.h
         src/Search.h
+        src/tests.h
         src/info.cpp
         src/CubieCube.cpp
         src/coords.cpp
         src/Search.cpp
         src/tools.cpp
         src/min2phase.cpp
+        src/tests.cpp
         benchmark.cpp )
+
+
+add_executable(tests
+        src/info.h
+        src/CubieCube.h
+        src/coords.h
+        src/Search.h
+        src/tests.h
+        src/info.cpp
+        src/CubieCube.cpp
+        src/coords.cpp
+        src/Search.cpp
+        src/tools.cpp
+        src/min2phase.cpp
+        src/tests.cpp
+        tests.cpp)

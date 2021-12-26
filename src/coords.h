@@ -1,9 +1,5 @@
-#ifndef MIN2PHASE_COORDS_H
-#define MIN2PHASE_COORDS_H 1
-
-#include "CubieCube.h"
-
 /**
+ * This file contains all the necessary for the coordinates.
  * This compute all the coordinates and symmetries
  * necessary for the algorithm.
  * In this are stored all the precomputed coordinate
@@ -23,8 +19,17 @@
  * identify every cube.
  */
 
+#ifndef MIN2PHASE_COORDS_H
+#define MIN2PHASE_COORDS_H 1
+
+#include "CubieCube.h"
+
 namespace min2phase { namespace coords {
 
+
+    /**
+     * This struct contains all the coordinates used in the algorithm.
+     */
     typedef struct coords_s{
         /**
          * In this array are stored the cubes result from each possible move
@@ -227,7 +232,10 @@ namespace min2phase { namespace coords {
 
     }coords_t;
 
-    extern coords_s coords;
+    /**
+     * The coordinates object for the algorithm.
+     */
+    extern coords_t coords;
 
     /**
      * This function is used to compute all the coordinates and symmetries.
@@ -242,7 +250,7 @@ namespace min2phase { namespace coords {
     bool isInit();
 
     /**
-     * This method is used to convert the a cube into a new one from a symmetry index.
+     * This function is used to convert the a cube into a new one from a symmetry index.
      * The symmetry is used to find 2 same cube and it increase the speed of the algorithm.
      * b = S_idx^-1 * a * S_idx for only corner. See the Kociemba's algorithm, Equivalent Cubes and Symmetry.
      *
@@ -253,7 +261,7 @@ namespace min2phase { namespace coords {
     void cornConjugate(const CubieCube &a, int8_t idx, CubieCube &b);
 
     /**
-     * This method is used to convert the a cube into a new one from a symmetry index.
+     * This function is used to convert the a cube into a new one from a symmetry index.
      * The symmetry is used to find 2 same cube and it increase the speed of the algorithm.
      * b = S_idx^-1 * a * S_idx for only edges. See the Kociemba's algorithm, Equivalent Cubes and Symmetry.
      *
@@ -264,7 +272,7 @@ namespace min2phase { namespace coords {
     void edgeConjugate(const CubieCube &a, int8_t idx, CubieCube &b);
 
     /**
-     * This method is used to get the permutation from the symmetry.
+     * This function is used to get the permutation from the symmetry.
      *
      * @param idx       : the symmetry index.
      * @param sym       : the symmetry used.
@@ -274,7 +282,7 @@ namespace min2phase { namespace coords {
     uint16_t getPermSymInv(uint16_t idx, int8_t sym, bool isCorner);
 
     /**
-     * This method is used to check if two cube are the same. It compares every
+     * This function is used to check if two cube are the same. It compares every
      * corner or edge from the two array.
      *
      * @param cube1  : the array containing the edge or corner of the first cube.
@@ -291,7 +299,7 @@ namespace min2phase { namespace coords {
      * x is the edge permutation.
      * Otherwise, if you need the symmetry of corner permutation you do
      * y*16+(k^e2c[k]) where x is the corner orientation.
-     * This method do the y*16+(k^e2c[k]).
+     * This function do the y*16+(k^e2c[k]).
      *
      * @param idx : the edge permutation symmetry to convert.
      * @return    : the corner permutation symmetry.
@@ -299,7 +307,7 @@ namespace min2phase { namespace coords {
     int32_t ESym2CSym(uint16_t idx);
 
     /**
-     * This method is ued to set the pruning in the pruning table.
+     * This function is ued to set the pruning in the pruning table.
      *
      * @param table : the table where the pruning will be stored.
      * @param index : the position of the pruning to store.
@@ -308,7 +316,7 @@ namespace min2phase { namespace coords {
     void setPruning(int32_t table[], int32_t index, int8_t value);
 
     /**
-     * This method is used to extract a pruning value from a pruning table.
+     * This function is used to extract a pruning value from a pruning table.
      *
      * @param table : the pruning table where is stored the value.
      * @param index : the position of the pruning to get.

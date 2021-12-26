@@ -1,6 +1,5 @@
 #include <fstream>
 #include <min2phase/min2phase.h>
-#include <min2phase/tools.h>
 #include "Search.h"
 
 namespace min2phase {

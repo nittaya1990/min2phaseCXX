@@ -22,8 +22,8 @@ namespace min2phase {
         CubieCube solveCube;
         CubieCube::OutputFormat solution;
 
-        int8_t move[info::MAX_LENGTH]{};
-        int8_t preMoves[MAX_PRE_MOVES]{};
+        int8_t move[info::MAX_LENGTH] = {0};
+        int8_t preMoves[MAX_PRE_MOVES] = {0};
 
         uint8_t* movesUsed = nullptr;
 
@@ -95,10 +95,9 @@ namespace min2phase {
         std::string solve(const std::string &facelets, int8_t maxDepth, int32_t probeMax, int32_t probeMin,
                           int8_t verbose, uint8_t *movesUsed);
 
-    private:
-
         int8_t verify(const std::string &facelets);
 
+    private:
         void initSearch();
 
         std::string search();
