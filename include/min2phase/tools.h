@@ -1,4 +1,6 @@
 /**
+ * Copyright (C) 2021 Borgo Federico
+ *
  * This file contains a lot of useful function for the cube.
  * There is the random cube generator, the converter from a moves string to a cube,
  * the benchmarking, the tests, the verify that chek if a cube is solvable and a

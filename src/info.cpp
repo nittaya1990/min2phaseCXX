@@ -1,3 +1,7 @@
+/**
+ * Copyright (C) 2021 Borgo Federico
+ */
+
 #include "info.h"
 
 namespace min2phase { namespace info {

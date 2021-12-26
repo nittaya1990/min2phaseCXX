@@ -1,4 +1,6 @@
 /**
+ * Copyright (C) 2021 Borgo Federico
+ *
  * This file contains all the function used to tests the
  * algorithm.
  * It chek the errors and the output of the search.

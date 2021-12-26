@@ -1,3 +1,7 @@
+/**
+ * Copyright (C) 2021 Borgo Federico
+ */
+
 #include <chrono>
 #include <iostream>
 #include <min2phase/min2phase.h>

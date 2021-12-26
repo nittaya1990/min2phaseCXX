@@ -1,3 +1,7 @@
+/**
+ * Copyright (C) 2021 Borgo Federico
+ */
+
 #include "coords.h"
 
 namespace min2phase { namespace coords {

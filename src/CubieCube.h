@@ -1,4 +1,6 @@
 /**
+ * Copyright (C) 2021 Borgo Federico
+ *
  * This file contains the class that contains a cube.
  * It has method that computes the coordinates to increase the speed of the algorithm.
  * This class contains also the output formatter for the algorithm.

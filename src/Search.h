@@ -1,3 +1,7 @@
+/**
+ * Copyright (C) 2021 Borgo Federico
+ */
+
 #ifndef MIN2PHASE_SEARCH_H
 #define MIN2PHASE_SEARCH_H 1
 

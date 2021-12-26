@@ -1,3 +1,7 @@
+/**
+ * Copyright (C) 2021 Borgo Federico
+ */
+
 #include <cassert>
 #include <min2phase/tools.h>
 #include <iostream>

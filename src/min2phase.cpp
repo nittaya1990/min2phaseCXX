@@ -1,3 +1,7 @@
+/**
+ * Copyright (C) 2021 Borgo Federico
+ */
+
 #include <fstream>
 #include <min2phase/min2phase.h>
 #include "Search.h"

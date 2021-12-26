@@ -1,4 +1,6 @@
 /**
+ * Copyright (C) 2021 Borgo Federico
+ *
  * This file contains all the necessary for the coordinates.
  * This compute all the coordinates and symmetries
  * necessary for the algorithm.

@@ -1,4 +1,6 @@
 /**
+ * Copyright (C) 2021 Borgo Federico
+ *
  * This file contains all the general constant of the algorithm.
  * For example the number of moves, corners or edges.
  * It has also precomputed binomial coefficient to increase the

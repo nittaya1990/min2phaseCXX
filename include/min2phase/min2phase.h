@@ -1,4 +1,6 @@
 /**
+ * Copyright (C) 2021 Borgo Federico
+ *
  * In this file there are all the functions used to solver a Rubik's cube.
  * You can configure the solver in base the speed you need. You can
  * define the limit of moves to use, the max cubes to search and format the
