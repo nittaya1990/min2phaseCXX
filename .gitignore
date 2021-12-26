@@ -6,4 +6,9 @@ example
 tests
 *.so
 benchmark
+CMakeFiles
+libmin2phase.a
+cmake_install.cmake
+CMakeCache.txt
+Makefile
 

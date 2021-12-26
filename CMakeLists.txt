@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 include_directories(include)
 
-add_executable(example
+add_library(min2phase STATIC
         src/info.h
         src/CubieCube.h
         src/coords.h
@@ -17,36 +17,17 @@ add_executable(example
         src/Search.cpp
         src/tools.cpp
         src/min2phase.cpp
-        src/tests.cpp
+        src/tests.cpp)
+
+add_executable(example
         example.cpp)
 
 add_executable(benchmark
-        src/info.h
-        src/CubieCube.h
-        src/coords.h
-        src/Search.h
-        src/tests.h
-        src/info.cpp
-        src/CubieCube.cpp
-        src/coords.cpp
-        src/Search.cpp
-        src/tools.cpp
-        src/min2phase.cpp
-        src/tests.cpp
         benchmark.cpp )
 
-
 add_executable(tests
-        src/info.h
-        src/CubieCube.h
-        src/coords.h
-        src/Search.h
-        src/tests.h
-        src/info.cpp
-        src/CubieCube.cpp
-        src/coords.cpp
-        src/Search.cpp
-        src/tools.cpp
-        src/min2phase.cpp
-        src/tests.cpp
         tests.cpp)
+
+target_link_libraries(example min2phase)
+target_link_libraries(benchmark min2phase)
+target_link_libraries(tests min2phase)

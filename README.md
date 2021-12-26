@@ -5,6 +5,21 @@
 
 # Usage
 
+First, you need to initialize the algorithm using:
+```C++
+    min2phase::init();
+```
+After that, you can write the initialization into a file, so the next time the algorithm initialization will be faster. Using:
+```C++
+    min2phase::writeFile("name.m2pc");
+```
+Now, the next time you can load the coordinates from the file:
+```C++
+    min2phase::loadFile("name.m2pc");
+```
+If you try to load a file that does not exist, min2phase::init() will be executed automatically.
+
+After the initialization, you can execute the solver. This is an example of how it works.
 See [min2phase.h](include/min2phase/min2phase.h) for the arguments explanation of the solver.
 
 ```C++
@@ -27,6 +42,7 @@ You can also read the coordinates from a file, see [min2phase.h](include/min2pha
 #Compiling
 
 ```bash
+cmake CMakeLists.txt
 make
-g++ -I include/ example.cpp -L. -lmin2phase -o example -Wl,-rpath,.
+g++ -I include/ yourporgram.cpp -L. -lmin2phase -o yourporgram -Wl,-rpath,.
 ```
