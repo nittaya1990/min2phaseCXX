@@ -1,5 +1,6 @@
 #include <fstream>
 #include <min2phase/min2phase.h>
+#include <min2phase/tools.h>
 #include "Search.h"
 
 namespace min2phase {
@@ -26,8 +27,8 @@ namespace min2phase {
         return false;
     }
 
-    //read coords
-    bool readFile(const std::string& name){
+    //load coords
+    bool loadFile(const std::string& name){
         std::ifstream in(name);
 
         if(in){

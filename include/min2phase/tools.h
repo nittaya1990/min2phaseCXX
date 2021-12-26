@@ -38,6 +38,11 @@ namespace min2phase { namespace tools {
      * @return  : the cube scrambled with every edge twisted.
      */
     std::string superFlip();
+
+    /**
+     * Print the result of the benchmark.
+     */
+    void benchmark();
 } }
 
 #endif //MIN2PHASE_TOOLS_H

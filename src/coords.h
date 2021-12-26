@@ -230,7 +230,7 @@ namespace min2phase { namespace coords {
     extern coords_s coords;
 
     /**
-     * This method is used to compute all the coordinates and symmetries.
+     * This function is used to compute all the coordinates and symmetries.
      */
     void init();
 

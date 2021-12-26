@@ -43,12 +43,12 @@ namespace min2phase{
     bool writeFile(const std::string& name);
 
     /**
-     * Read all the coordinates from a binary file.
+     * Load all the coordinates from a binary file.
      *
      * @param name      : the name and path of the file.
      * @return          : true if the file was red, false if not.
      */
-    bool readFile(const std::string& name);
+    bool loadFile(const std::string& name);
 
     /**
      * This is used to solve the cube. It has many configuration in base of the
