@@ -20,13 +20,13 @@ add_library(min2phase STATIC
         src/tests.cpp)
 
 add_executable(example
-        example.cpp)
+        examples/example.cpp)
 
 add_executable(benchmark
-        benchmark.cpp )
+        examples/benchmark.cpp)
 
 add_executable(tests
-        tests.cpp)
+        examples/tests.cpp)
 
 target_link_libraries(example min2phase)
 target_link_libraries(benchmark min2phase)
