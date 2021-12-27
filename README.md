@@ -39,7 +39,7 @@ See [tools.h](include/min2phase/tools.h) for some useful function for the solver
 You can also read the coordinates from a file, see [min2phase.h](include/min2phase/min2phase.h). Reading from a file the coordinates will increase the speed of the algorithm.
 
 
-#Compiling
+# Compiling
 
 ```bash
 cmake CMakeLists.txt
