@@ -1,5 +1,5 @@
 /**
- * min2phaseCXX Copyright (C) 2021 Borgo Federico
+ * min2phaseCXX Copyright (C) 2022 Borgo Federico
  * This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
  * This is free software, and you are welcome to redistribute it
  * under certain conditions; type `show c' for details.
@@ -247,7 +247,7 @@ namespace min2phase {
     //set permutation
     void CubieCube::setNPerm(int8_t arr[], int32_t idx, uint8_t n, bool isEdge) {
         uint8_t i;
-        int64_t val = 0xFEDCBA9876543210L;
+        uint64_t val = 0xFEDCBA9876543210L;
         int64_t v;
         int64_t m, extract = 0;
 
@@ -260,6 +260,7 @@ namespace min2phase {
             v = (extract & 0xf) << 2;
             extract >>= 4;
             arr[i] = setVal(arr[i], val >> v & 0xf, isEdge);
+
             m = (int64_t(1) << v) - 1;
             val = (val & m) | (val >> 4 & ~m);
         }
@@ -271,7 +272,7 @@ namespace min2phase {
     int32_t CubieCube::getNPerm(const int8_t arr[], uint8_t n, bool isEdge) {
         uint8_t i, v;
         int32_t idx = 0;
-        int64_t val = 0xFEDCBA9876543210L;
+        uint64_t val = 0xFEDCBA9876543210L;
 
         for (i = 0; i < n - 1; i++) {
             v = getVal(arr[i], isEdge) << 2;
@@ -445,7 +446,7 @@ namespace min2phase {
 
     //get corner symmetry
     uint8_t CubieCube::getCComb() const {
-        return getComb(corners, 0, false);
+        return (uint8_t)getComb(corners, 0, false);
     }
 
     //set corner symmetry
@@ -465,6 +466,7 @@ namespace min2phase {
 
     //set data
     void CubieCube::OutputFormat::setArgs(int8_t format, int8_t urfIdx, int8_t depth1) {
+        MIN2PHASE_OUTPUT("Solution output set.")
         this->format = format;
         this->urfIdx = urfIdx;
         this->depth1 = depth1;
@@ -517,6 +519,8 @@ namespace min2phase {
         int8_t urf = (format & INVERSE_SOLUTION) != 0 ? (urfIdx + info::N_GROUP_MOVES) % 6 : urfIdx;
         const bool useInv = urf < info::N_GROUP_MOVES;
         int8_t s;
+
+        MIN2PHASE_OUTPUT("Converting to string.")
 
         solutionPos = 0;
 

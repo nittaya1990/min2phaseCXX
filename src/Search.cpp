@@ -1,5 +1,5 @@
 /**
- * min2phaseCXX Copyright (C) 2021 Borgo Federico
+ * min2phaseCXX Copyright (C) 2022 Borgo Federico
  * This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
  * This is free software, and you are welcome to redistribute it
  * under certain conditions; type `show c' for details.
@@ -19,6 +19,8 @@ std::string min2phase::Search::solve(const std::string &facelets, int8_t maxDept
     if (error != 0)
         return std::to_string((int32_t)error);
 
+    MIN2PHASE_OUTPUT("String integrity check done.")
+
     this->movesUsed = movesUsed;
     this->solLen = maxDepth+1;
     this->probe = 0;
@@ -27,6 +29,8 @@ std::string min2phase::Search::solve(const std::string &facelets, int8_t maxDept
     this->verbose = verbose;
 
     initSearch();
+
+    MIN2PHASE_OUTPUT("Search initialized.")
 
     return  (verbose & OPTIMAL_SOLUTION) == 0 ? search() : searchOpt();
 }
@@ -129,9 +133,13 @@ int8_t min2phase::Search::phase1PreMoves(int8_t maxl, int8_t lm, CubieCube* cc, 
     int8_t m, ret;
     int32_t skipMoves;
 
+    const int32_t VAL = 0x36FB7;
+
+    MIN2PHASE_OUTPUT("Phase 1 pre moves.")
+
     preMoveLen = maxPreMoves-maxl;
 
-    if (preMoveLen == 0 || (0x36FB7 >> lm & 1) == 0) {
+    if (preMoveLen == 0 || ((VAL >> (lm+32)) & 1) == 0) {
         depth1 = length1-preMoveLen;
         phase1Cubie[0] = *cc;
         allowShorter = depth1 == MIN_P1LENGTH_PRE && preMoveLen != 0;
@@ -145,7 +153,7 @@ int8_t min2phase::Search::phase1PreMoves(int8_t maxl, int8_t lm, CubieCube* cc, 
         return 1;
 
     if (maxl == 1 || preMoveLen+1+MIN_P1LENGTH_PRE >= length1)
-        skipMoves = 0x36FB7;
+        skipMoves = VAL;
     else
         skipMoves = 0;
 
@@ -174,6 +182,8 @@ int8_t min2phase::Search::phase1PreMoves(int8_t maxl, int8_t lm, CubieCube* cc, 
 
 int8_t min2phase::Search::phase1(coords::CoordCube* node, uint16_t ssym, int8_t maxl, int8_t lm) {
     int8_t ret, axis, m, power, prun;
+
+    MIN2PHASE_OUTPUT("Phase 1.")
 
     if (node->prun == 0 && maxl < 5) {
         if (allowShorter || maxl == 0) {
@@ -224,6 +234,8 @@ int8_t min2phase::Search::initPhase2Pre() {
     int8_t  p2csym, p2esym, p2mid, lastMove, lastPre, p2switchMax, p2switchMask;
     int8_t p2switch, ret;
     int8_t i, m;
+
+    MIN2PHASE_OUTPUT("Init phase 2.")
 
     if (probe >= (!solution.isFound ? probeMax : probeMin))
         return 0;
@@ -316,6 +328,8 @@ int8_t min2phase::Search::initPhase2(uint16_t p2corn, int8_t p2csym, uint16_t p2
     int8_t prun, depth2, i;
     int8_t ret;
 
+    MIN2PHASE_OUTPUT("Init phase 2.")
+
     prun = std::max(
             coords::getPruning(coords::coords.EPermCCombPPrun,
                                (edgei >> 4) * info::N_COMB + coords::coords.CCombPConj[coords::coords.Perm2CombP[corni >> 4] & 0xff][coords::coords.SymMultInv[edgei & 0xf][corni & 0xf]]),
@@ -363,6 +377,8 @@ int8_t min2phase::Search::phase2(uint16_t edge, int8_t esym, uint16_t corn, int8
     int8_t midx, csymx, prun;
     int16_t moveMask;
     int8_t m, ret;
+
+    MIN2PHASE_OUTPUT("Phase 2.")
 
     if (edge == 0 && corn == 0 && mid == 0)
         return maxl;
@@ -429,6 +445,8 @@ std::string min2phase::Search::searchOpt() {
     coords::CoordCube rl{};
     coords::CoordCube fb{};
 
+    MIN2PHASE_OUTPUT("Optimal searching.")
+
     for (uint8_t i = 0; i < info::N_BASIC_MOVES; i++) {
         urfCoordCube[i].calcPrun(false);
 
@@ -458,6 +476,8 @@ std::string min2phase::Search::searchOpt() {
 
 int8_t min2phase::Search::phase1opt(coords::CoordCube ud, coords::CoordCube rl, coords::CoordCube fb, int64_t ssym, int8_t maxl, int8_t lm) {
     uint8_t axis, power, prun_ud, prun_rl, prun_fb, m;
+
+    MIN2PHASE_OUTPUT("Phase 1 optimal.")
 
     if (ud.prun == 0 && rl.prun == 0 && fb.prun == 0 && maxl < 5) {
         maxDep2 = maxl;

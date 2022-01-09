@@ -1,5 +1,5 @@
 /**
- * min2phaseCXX Copyright (C) 2021 Borgo Federico
+ * min2phaseCXX Copyright (C) 2022 Borgo Federico
  * This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
  * This is free software, and you are welcome to redistribute it
  * under certain conditions; type `show c' for details.
@@ -22,6 +22,15 @@
 
 #include <cstdint>
 #include <string>
+
+//#define MIN2PHASE_DEBUG
+
+#ifdef MIN2PHASE_DEBUG
+#include <iostream>
+#define MIN2PHASE_OUTPUT(x) std::cout << x << std::endl;
+#else
+#define MIN2PHASE_OUTPUT(x)
+#endif
 
 namespace min2phase{
 

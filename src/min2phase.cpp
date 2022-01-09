@@ -1,5 +1,5 @@
 /**
- * min2phaseCXX Copyright (C) 2021 Borgo Federico
+ * min2phaseCXX Copyright (C) 2022 Borgo Federico
  * This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
  * This is free software, and you are welcome to redistribute it
  * under certain conditions; type `show c' for details.
@@ -24,6 +24,8 @@ namespace min2phase {
 
         std::ofstream out(name);
 
+        MIN2PHASE_OUTPUT("Writing file.")
+
         if(out) {
             out.write(reinterpret_cast<char *>(&coords::coords), sizeof(coords::coords_t));
             out.close();
@@ -36,6 +38,8 @@ namespace min2phase {
     //load coords
     bool loadFile(const std::string& name){
         std::ifstream in(name);
+
+        MIN2PHASE_OUTPUT("Loading file.")
 
         if(in){
             in.read(reinterpret_cast<char*>(&coords::coords), sizeof(coords::coords_t));
@@ -52,7 +56,7 @@ namespace min2phase {
     //solve the cube
     std::string solve(const std::string &facelets, int8_t maxDepth, int32_t probeMax, int32_t probeMin,
                                      int8_t verbose, uint8_t* usedMoves) {
-
+        MIN2PHASE_OUTPUT("Init solving.")
         return Search().solve(facelets, maxDepth, probeMax, probeMin, verbose, usedMoves);
     }
 }

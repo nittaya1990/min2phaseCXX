@@ -1,10 +1,11 @@
 /**
- * min2phaseCXX Copyright (C) 2021 Borgo Federico
+ * min2phaseCXX Copyright (C) 2022 Borgo Federico
  * This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
  * This is free software, and you are welcome to redistribute it
  * under certain conditions; type `show c' for details.
  */
 
+#include <min2phase/min2phase.h>
 #include "coords.h"
 
 namespace min2phase { namespace coords {
@@ -172,6 +173,7 @@ namespace min2phase { namespace coords {
 
         //init all coordinates
     void init() {
+        MIN2PHASE_OUTPUT("Info initialization.")
         coords.urf.setCoords(2531, 1373, 67026819, 1367);
         coords.urfInv.setCoords(2089, 1906, 322752913, 2040);
 
@@ -255,12 +257,12 @@ namespace min2phase { namespace coords {
 
     //set value in pruning table
     void setPruning(int32_t table[], int32_t index, int8_t value) {
-        table[index >> 3] ^= value << (index << 2); // index << 2 <=> (index & 7) << 2
+        table[index >> 3] ^= value << ((index << 2)%(sizeof(int32_t)*8)); // index << 2 <=> (index & 7) << 2
     }
 
     //get value in pruning table
     int8_t getPruning(const int32_t table[], int32_t index) {
-        return table[index >> 3] >> (index << 2) & 0xf; // index << 2 <=> (index & 7) << 2
+        return table[index >> 3] >> ((index << 2)%(sizeof(int32_t)*8)) & 0xf; // index << 2 <=> (index & 7) << 2
     }
 
     bool hasZero(int32_t val) {
@@ -326,8 +328,8 @@ namespace min2phase { namespace coords {
 
                 for (k = 0; k < info::SYM; k++) {
                     if (isSameCube(coords.CubeSym[k].corners, c.corners, false)) {
-                        coords.SymMult[i][j] = k;
-                        coords.SymMultInv[k][j] = i;
+                        coords.SymMult[i][j] = (int8_t)k;
+                        coords.SymMultInv[k][j] = (int8_t)i;
                         break;
                     }
                 }
@@ -351,7 +353,7 @@ namespace min2phase { namespace coords {
             }
 
             coords.moveCubeSym[i] = coords.moveCube[i].selfSym();
-            j = i;
+            j = (uint8_t)i;
 
             for (int s = 0; s < info::FULL_SYM; s++) {
                 if (coords.SymMove[s % info::SYM][j] < i)

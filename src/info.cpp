@@ -1,10 +1,11 @@
 /**
- * min2phaseCXX Copyright (C) 2021 Borgo Federico
+ * min2phaseCXX Copyright (C) 2022 Borgo Federico
  * This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
  * This is free software, and you are welcome to redistribute it
  * under certain conditions; type `show c' for details.
  */
 
+#include <min2phase/min2phase.h>
 #include "info.h"
 
 namespace min2phase { namespace info {
@@ -53,6 +54,7 @@ namespace min2phase { namespace info {
     }
 
     void init(){
+        MIN2PHASE_OUTPUT("Info initialization.");
         initCnk();
         initStd2ud();
         initCkmv2bit();

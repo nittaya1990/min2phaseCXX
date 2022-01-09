@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.13)
 project(min2phase)
 
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_COMPILER arm-linux-gnueabihf-g++)
 
 include_directories(include)
 

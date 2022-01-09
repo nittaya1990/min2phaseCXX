@@ -1,5 +1,5 @@
 /**
- * min2phaseCXX Copyright (C) 2021 Borgo Federico
+ * min2phaseCXX Copyright (C) 2022 Borgo Federico
  * This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
  * This is free software, and you are welcome to redistribute it
  * under certain conditions; type `show c' for details.
@@ -13,11 +13,12 @@
 
 int main(int argc, char *argv[]){
     uint8_t movesUsed;
-
     min2phase::tools::setRandomSeed(time(nullptr));
 
     auto start = std::chrono::high_resolution_clock::now();
+    //min2phase::init();
     min2phase::loadFile("coords.m2pc");
+    //min2phase::writeFile("coords.m2pc");
     auto end = std::chrono::high_resolution_clock::now();
 
     std::cout <<  std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count() << "ms\n";
