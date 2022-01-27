@@ -1,3 +1,14 @@
+/**
+ * min2phaseCXX Copyright (C) 2022 Borgo Federico
+ * This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
+ * This is free software, and you are welcome to redistribute it
+ * under certain conditions; type `show c' for details.
+ *
+ * This file contains the class that contains a cube.
+ * It has method that computes the coordinates to increase the speed of the algorithm.
+ * This class contains also the output formatter for the algorithm.
+ */
+
 #ifndef MIN2PHASE_CUBIECUBE_H
 #define MIN2PHASE_CUBIECUBE_H 1
 
@@ -49,7 +60,7 @@ namespace min2phase {
          * @param ePerm  : the edge permutation.
          * @param eOri   : the edge orientation.
          */
-        void setValues(uint16_t cPerm, int16_t cOri, int32_t ePerm, int16_t eOri);
+        void setCoords(uint16_t cPerm, int16_t cOri, int32_t ePerm, int16_t eOri);
 
         /**
          * This method is used to create a new cube from an existing one.
@@ -58,21 +69,13 @@ namespace min2phase {
          *
          * @param cube   : the cube where is stored the old cube to copy.
          */
-        void setValues(const CubieCube &cube);
-
-        /**
-         * This function is used to create a copy of a cube.
-         * The new cube is stored in the object where this method is used.
-         *
-         * @param cube : the cube to copy
-         */
         void copy(const CubieCube &cube);
 
         /**
          * This method create a inverse cube from the object.
          * It changes the edge and corner position.
          */
-        void invCubieCube();
+        void inv();
 
         /**
          * This method is used to apply the S_URF symmetry. It creates a new cube
@@ -86,7 +89,7 @@ namespace min2phase {
          *
          * @return : the symmetry.
          */
-        int64_t selfSymmetry() const;
+        int64_t selfSym() const;
 
         /**
          * This function check if the cube is possible.
@@ -94,7 +97,7 @@ namespace min2phase {
          *
          * @return : a value that indicates the error, see info.
          */
-        int8_t verify() const;
+        info::Errors check() const;
 
         /**
          * This function is used to convert an order of face of cube into
@@ -120,7 +123,7 @@ namespace min2phase {
          * @param b    : cube with orientation.
          * @param prod : the result cube reference.
          */
-        static void EdgeMult(const CubieCube &a, const CubieCube &b, CubieCube &prod);
+        static void edgeMult(const CubieCube &a, const CubieCube &b, CubieCube &prod);
 
         /**
          * This method is used to compute the result of a * b corner only.
@@ -129,7 +132,7 @@ namespace min2phase {
          * @param b    : cube with orientation.
          * @param prod : the result cube reference.
          */
-        static void CornMult(const CubieCube &a, const CubieCube &b, CubieCube &prod);
+        static void cornMult(const CubieCube &a, const CubieCube &b, CubieCube &prod);
 
         /**
          * This method is used to compute the result of a * b corner with mirrored cases.
@@ -138,7 +141,7 @@ namespace min2phase {
          * @param b    : cube with orientation.
          * @param prod : the result cube reference.
          */
-        static void CornMultFull(const CubieCube &a, const CubieCube &b, CubieCube &prod);
+        static void cornMultFull(const CubieCube &a, const CubieCube &b, CubieCube &prod);
 
     private:
 

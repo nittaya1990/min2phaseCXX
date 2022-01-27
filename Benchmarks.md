@@ -1,6 +1,6 @@
 #Linux
 
-Processor used (OS Linux): AMD Ryzen 5 3500U with Radeon Vega Mobile Gfx
+CPU model: AMD Ryzen 5 3500U with Radeon Vega Mobile Gfx (OS Linux)
 
 Init time average: 153 ms
 
@@ -36,7 +36,7 @@ Init time average: 153 ms
 
 #Windows
 
-Processor used (OS Windows): AMD Ryzen 5 2600 Six-Core Processor
+GPU model: AMD Ryzen 5 2600 Six-Core Processor (OS Windows)
 
 Init time average: 179ms
 
@@ -70,4 +70,37 @@ Init time average: 179ms
 |  0.5 ms   |     21     |
 |  6.0 ms   |     20     |
 
-    
+#Raspberry 3b
+
+CPU model: ARMv7 Processor rev 4 (v7l) (OS Linux)
+Init time average: 1210ms
+
+| probeMin | Avg Length |   Time   |
+|:--------:|:----------:|:--------:|
+|      5   |    20.5    |  11.4 ms |
+|     10   |    20.9    |  18.5 ms |
+|     20   |    21.0    |  32.8 ms |
+|     40   |    20.1    |  38.9 ms |
+|     80   |    20.0    |  77.2 ms |
+|    160   |    19.5    | 119.3 ms |
+|    320   |    19.6    | 233.1 ms |
+|    640   |    19.4    | 441.7 ms |
+|   1280   |    19.1    | 778.9 ms |
+|   2560   |    19.0    |1677.6 ms |
+|   5120   |    18.7    |2734.6 ms |
+|  10240   |    19.0    |5091.0 ms |
+
+|   Time    |  Max Moves |
+|:---------:|:----------:|
+| 12.4 ms   |     31     |
+| 11.2 ms   |     30     |
+| 11.6 ms   |     29     |
+| 13.3 ms   |     28     |
+| 12.8 ms   |     27     |
+| 16.6 ms   |     26     |
+|  9.4 ms   |     25     |
+|  8.8 ms   |     24     |
+| 11.8 ms   |     23     |
+| 12.1 ms   |     22     |
+| 26.1 ms   |     21     |
+| 45.2 ms   |     20     |

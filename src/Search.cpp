@@ -1,3 +1,10 @@
+/**
+ * min2phaseCXX Copyright (C) 2022 Borgo Federico
+ * This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
+ * This is free software, and you are welcome to redistribute it
+ * under certain conditions; type `show c' for details.
+ */
+
 #include <min2phase/min2phase.h>
 #include "Search.h"
 
@@ -12,6 +19,8 @@ std::string min2phase::Search::solve(const std::string &facelets, int8_t maxDept
     if (error != 0)
         return std::to_string((int32_t)error);
 
+    MIN2PHASE_OUTPUT("String integrity check done.")
+
     this->movesUsed = movesUsed;
     this->solLen = maxDepth+1;
     this->probe = 0;
@@ -21,6 +30,8 @@ std::string min2phase::Search::solve(const std::string &facelets, int8_t maxDept
 
     initSearch();
 
+    MIN2PHASE_OUTPUT("Search initialized.")
+
     return  (verbose & OPTIMAL_SOLUTION) == 0 ? search() : searchOpt();
 }
 
@@ -29,12 +40,10 @@ int8_t min2phase::Search::verify(const std::string& facelets) {
     char centers[info::FACES];
     int8_t cube [info::N_PLATES];
     int32_t count = 0x000000;
-    int8_t i, j, len;
+    int8_t i, j;
     bool notQuit;
 
-    for(len = 0; facelets[len] != '\0'; len++);
-
-    if(len != info::N_PLATES)
+    if(facelets.length() != info::N_PLATES)
         return info::MALFORMED_STRING;
 
     centers[0] = facelets[info::U5];
@@ -67,12 +76,14 @@ int8_t min2phase::Search::verify(const std::string& facelets) {
 
     CubieCube::toCubieCube(cube, solveCube);
 
-    return solveCube.verify();
+    MIN2PHASE_OUTPUT("Solving a cube.")
+
+    return solveCube.check();
 }
 
 void min2phase::Search::initSearch() {
     int8_t i;
-    selfSym = solveCube.selfSymmetry();
+    selfSym = solveCube.selfSym();
     conjMask |= (selfSym >> 16 & 0xffff) != 0 ? 0x12 : 0;
     conjMask |= (selfSym >> 32 & 0xffff) != 0 ? 0x24 : 0;
     conjMask |= (selfSym >> 48 & 0xffff) != 0 ? 0x38 : 0;
@@ -85,7 +96,7 @@ void min2phase::Search::initSearch() {
         solveCube.URFConjugate();
 
         if (i%3 == 2)
-            solveCube.invCubieCube();
+            solveCube.inv();
     }
 }
 
@@ -124,9 +135,15 @@ int8_t min2phase::Search::phase1PreMoves(int8_t maxl, int8_t lm, CubieCube* cc, 
     int8_t m, ret;
     int32_t skipMoves;
 
+    const int32_t VAL = 0x36FB7;
+
+#if MIN2PHASE_DEBUG > 1
+    MIN2PHASE_OUTPUT("Phase 1 pre moves.")
+#endif
+
     preMoveLen = maxPreMoves-maxl;
 
-    if (preMoveLen == 0 || (0x36FB7 >> lm & 1) == 0) {
+    if (preMoveLen == 0 || ((VAL >> (lm+32)) & 1) == 0) {
         depth1 = length1-preMoveLen;
         phase1Cubie[0] = *cc;
         allowShorter = depth1 == MIN_P1LENGTH_PRE && preMoveLen != 0;
@@ -140,7 +157,7 @@ int8_t min2phase::Search::phase1PreMoves(int8_t maxl, int8_t lm, CubieCube* cc, 
         return 1;
 
     if (maxl == 1 || preMoveLen+1+MIN_P1LENGTH_PRE >= length1)
-        skipMoves = 0x36FB7;
+        skipMoves = VAL;
     else
         skipMoves = 0;
 
@@ -155,10 +172,10 @@ int8_t min2phase::Search::phase1PreMoves(int8_t maxl, int8_t lm, CubieCube* cc, 
         if ((skipMoves & 1 << m) != 0)
             continue;
 
-        CubieCube::CornMult(coords::moveCube[m], *cc, preMoveCubes[maxl]);
-        CubieCube::EdgeMult(coords::moveCube[m], *cc, preMoveCubes[maxl]);
+        CubieCube::cornMult(coords::coords.moveCube[m], *cc, preMoveCubes[maxl]);
+        CubieCube::edgeMult(coords::coords.moveCube[m], *cc, preMoveCubes[maxl]);
         preMoves[maxPreMoves - maxl] = m;
-        ret = phase1PreMoves(maxl - 1, m, &preMoveCubes[maxl], ssym & (int32_t) coords::moveCubeSym[m]);
+        ret = phase1PreMoves(maxl - 1, m, &preMoveCubes[maxl], ssym & (int32_t) coords::coords.moveCubeSym[m]);
 
         if (ret == 0)
             return 0;
@@ -169,6 +186,10 @@ int8_t min2phase::Search::phase1PreMoves(int8_t maxl, int8_t lm, CubieCube* cc, 
 
 int8_t min2phase::Search::phase1(coords::CoordCube* node, uint16_t ssym, int8_t maxl, int8_t lm) {
     int8_t ret, axis, m, power, prun;
+
+#if MIN2PHASE_DEBUG > 1
+    MIN2PHASE_OUTPUT("Phase 1.")
+#endif
 
     if (node->prun == 0 && maxl < 5) {
         if (allowShorter || maxl == 0) {
@@ -202,7 +223,7 @@ int8_t min2phase::Search::phase1(coords::CoordCube* node, uint16_t ssym, int8_t 
 
             move[depth1 - maxl] = m;
             valid1 = std::min(valid1, int8_t(depth1 - maxl));
-            ret = phase1(&nodeUD[maxl], ssym & (int32_t) coords::moveCubeSym[m], maxl - 1, axis);
+            ret = phase1(&nodeUD[maxl], ssym & (int32_t) coords::coords.moveCubeSym[m], maxl - 1, axis);
 
             if (ret == 0)
                 return 0;
@@ -220,14 +241,18 @@ int8_t min2phase::Search::initPhase2Pre() {
     int8_t p2switch, ret;
     int8_t i, m;
 
+#if MIN2PHASE_DEBUG > 1
+    MIN2PHASE_OUTPUT("Init phase 2.")
+#endif
+
     if (probe >= (!solution.isFound ? probeMax : probeMin))
         return 0;
 
     ++probe;
 
     for (i = valid1; i < depth1; i++) {
-        CubieCube::CornMult(phase1Cubie[i], coords::moveCube[move[i]], phase1Cubie[i + 1]);
-        CubieCube::EdgeMult(phase1Cubie[i], coords::moveCube[move[i]], phase1Cubie[i + 1]);
+        CubieCube::cornMult(phase1Cubie[i], coords::coords.moveCube[move[i]], phase1Cubie[i + 1]);
+        CubieCube::edgeMult(phase1Cubie[i], coords::coords.moveCube[move[i]], phase1Cubie[i + 1]);
     }
 
     valid1 = depth1;
@@ -270,12 +295,12 @@ int8_t min2phase::Search::initPhase2Pre() {
             m = info::std2ud[lastMove / 3 * 3 + 1];
             move[depth1 - 1] = info::ud2std[m] * 2 - move[depth1 - 1];
 
-            p2mid = coords::MPermMove[p2mid][m];
-            p2corn = coords::CPermMove[p2corn][coords::SymMoveUD[p2csym][m]];
-            p2csym = coords::SymMult[p2corn & 0xf][p2csym];
+            p2mid = coords::coords.MPermMove[p2mid][m];
+            p2corn = coords::coords.CPermMove[p2corn][coords::coords.SymMoveUD[p2csym][m]];
+            p2csym = coords::coords.SymMult[p2corn & 0xf][p2csym];
             p2corn >>= 4;
-            p2edge = coords::EPermMove[p2edge][coords::SymMoveUD[p2esym][m]];
-            p2esym = coords::SymMult[p2edge & 0xf][p2esym];
+            p2edge = coords::coords.EPermMove[p2edge][coords::coords.SymMoveUD[p2esym][m]];
+            p2esym = coords::coords.SymMult[p2edge & 0xf][p2esym];
             p2edge >>= 4;
             corni = coords::getPermSymInv(p2corn, p2csym, true);
             edgei = coords::getPermSymInv(p2edge, p2esym, false);
@@ -284,14 +309,14 @@ int8_t min2phase::Search::initPhase2Pre() {
             m = info::std2ud[lastPre / 3 * 3 + 1];
             preMoves[preMoveLen - 1] = info::ud2std[m] * 2 - preMoves[preMoveLen - 1];
 
-            p2mid = coords::MPermInv[coords::MPermMove[coords::MPermInv[p2mid]][m]];
-            p2corn = coords::CPermMove[corni >> 4][coords::SymMoveUD[corni & 0xf][m]];
-            corni = p2corn & ~0xf | coords::SymMult[p2corn & 0xf][corni & 0xf];
+            p2mid = coords::coords.MPermInv[coords::coords.MPermMove[coords::coords.MPermInv[p2mid]][m]];
+            p2corn = coords::coords.CPermMove[corni >> 4][coords::coords.SymMoveUD[corni & 0xf][m]];
+            corni = p2corn & ~0xf | coords::coords.SymMult[p2corn & 0xf][corni & 0xf];
             p2corn = coords::getPermSymInv(corni >> 4, corni & 0xf, true);
             p2csym = p2corn & 0xf;
             p2corn >>= 4;
-            p2edge = coords::EPermMove[edgei >> 4][coords::SymMoveUD[edgei & 0xf][m]];
-            edgei = p2edge & ~0xf | coords::SymMult[p2edge & 0xf][edgei & 0xf];
+            p2edge = coords::coords.EPermMove[edgei >> 4][coords::coords.SymMoveUD[edgei & 0xf][m]];
+            edgei = p2edge & ~0xf | coords::coords.SymMult[p2edge & 0xf][edgei & 0xf];
             p2edge = coords::getPermSymInv(edgei >> 4, edgei & 0xf, false);
             p2esym = p2edge & 0xf;
             p2edge >>= 4;
@@ -311,14 +336,18 @@ int8_t min2phase::Search::initPhase2(uint16_t p2corn, int8_t p2csym, uint16_t p2
     int8_t prun, depth2, i;
     int8_t ret;
 
+#if MIN2PHASE_DEBUG > 1
+    MIN2PHASE_OUTPUT("Init phase 2.")
+#endif
+
     prun = std::max(
-            coords::getPruning(coords::EPermCCombPPrun,
-                               (edgei >> 4) * info::N_COMB + coords::CCombPConj[coords::Perm2CombP[corni >> 4] & 0xff][coords::SymMultInv[edgei & 0xf][corni & 0xf]]),
+            coords::getPruning(coords::coords.EPermCCombPPrun,
+                               (edgei >> 4) * info::N_COMB + coords::coords.CCombPConj[coords::coords.Perm2CombP[corni >> 4] & 0xff][coords::coords.SymMultInv[edgei & 0xf][corni & 0xf]]),
             std::max(
-                    coords::getPruning(coords::EPermCCombPPrun,
-                                       p2edge * info::N_COMB + coords::CCombPConj[coords::Perm2CombP[p2corn] & 0xff][coords::SymMultInv[p2esym][p2csym]]),
-                    coords::getPruning(coords::MCPermPrun,
-                                       p2corn * info::N_MPERM + coords::MPermConj[p2mid][p2csym])));
+                    coords::getPruning(coords::coords.EPermCCombPPrun,
+                                       p2edge * info::N_COMB + coords::coords.CCombPConj[coords::coords.Perm2CombP[p2corn] & 0xff][coords::coords.SymMultInv[p2esym][p2csym]]),
+                    coords::getPruning(coords::coords.MCPermPrun,
+                                       p2corn * info::N_MPERM + coords::coords.MPermConj[p2mid][p2csym])));
 
     if (prun > maxDep2)
         return prun - maxDep2;
@@ -359,6 +388,10 @@ int8_t min2phase::Search::phase2(uint16_t edge, int8_t esym, uint16_t corn, int8
     int16_t moveMask;
     int8_t m, ret;
 
+#if MIN2PHASE_DEBUG > 1
+    MIN2PHASE_OUTPUT("Phase 2.")
+#endif
+
     if (edge == 0 && corn == 0 && mid == 0)
         return maxl;
 
@@ -371,18 +404,18 @@ int8_t min2phase::Search::phase2(uint16_t edge, int8_t esym, uint16_t corn, int8
             continue;
         }
 
-        midx = coords::MPermMove[mid][m];
-        cornx = coords::CPermMove[corn][coords::SymMoveUD[csym][m]];
-        csymx = coords::SymMult[cornx & 0xf][csym];
+        midx = coords::coords.MPermMove[mid][m];
+        cornx = coords::coords.CPermMove[corn][coords::coords.SymMoveUD[csym][m]];
+        csymx = coords::coords.SymMult[cornx & 0xf][csym];
         cornx >>= 4;
-        edgex = coords::EPermMove[edge][coords::SymMoveUD[esym][m]];
-        int8_t esymx = coords::SymMult[edgex & 0xf][esym];
+        edgex = coords::coords.EPermMove[edge][coords::coords.SymMoveUD[esym][m]];
+        int8_t esymx = coords::coords.SymMult[edgex & 0xf][esym];
         edgex >>= 4;
         edgei = coords::getPermSymInv(edgex, esymx, false);
         corni = coords::getPermSymInv(cornx, csymx, true);
 
-        prun = coords::getPruning(coords::EPermCCombPPrun,
-                                  (edgei >> 4) * info::N_COMB + coords::CCombPConj[coords::Perm2CombP[corni >> 4] & 0xff][coords::SymMultInv[edgei & 0xf][corni & 0xf]]);
+        prun = coords::getPruning(coords::coords.EPermCCombPPrun,
+                                  (edgei >> 4) * info::N_COMB + coords::coords.CCombPConj[coords::coords.Perm2CombP[corni >> 4] & 0xff][coords::coords.SymMultInv[edgei & 0xf][corni & 0xf]]);
         if (prun > maxl + 1)
             return maxl - prun + 1;
         else if (prun >= maxl) {
@@ -391,10 +424,10 @@ int8_t min2phase::Search::phase2(uint16_t edge, int8_t esym, uint16_t corn, int8
         }
 
         prun = std::max(
-                coords::getPruning(coords::MCPermPrun,
-                                   cornx * info::N_MPERM + coords::MPermConj[midx][csymx]),
-                coords::getPruning(coords::EPermCCombPPrun,
-                                   edgex * info::N_COMB + coords::CCombPConj[coords::Perm2CombP[cornx] & 0xff][coords::SymMultInv[esymx][csymx]]));
+                coords::getPruning(coords::coords.MCPermPrun,
+                                   cornx * info::N_MPERM + coords::coords.MPermConj[midx][csymx]),
+                coords::getPruning(coords::coords.EPermCCombPPrun,
+                                   edgex * info::N_COMB + coords::coords.CCombPConj[coords::coords.Perm2CombP[cornx] & 0xff][coords::coords.SymMultInv[esymx][csymx]]));
 
         if(prun >= maxl) {
             m += 0x42 >> m & 3 & (maxl - prun);
@@ -424,8 +457,10 @@ std::string min2phase::Search::searchOpt() {
     coords::CoordCube rl{};
     coords::CoordCube fb{};
 
+    MIN2PHASE_OUTPUT("Optimal searching.")
+
     for (uint8_t i = 0; i < info::N_BASIC_MOVES; i++) {
-        urfCoordCube[i].calcPruning(false);
+        urfCoordCube[i].calcPrun(false);
 
         if (i < info::N_BASIC_MOVES/2)
             maxprun1 = std::max(maxprun1, urfCoordCube[i].prun);
@@ -453,6 +488,10 @@ std::string min2phase::Search::searchOpt() {
 
 int8_t min2phase::Search::phase1opt(coords::CoordCube ud, coords::CoordCube rl, coords::CoordCube fb, int64_t ssym, int8_t maxl, int8_t lm) {
     uint8_t axis, power, prun_ud, prun_rl, prun_fb, m;
+
+#if MIN2PHASE_DEBUG > 1
+    MIN2PHASE_OUTPUT("Phase 1 optimal.")
+#endif
 
     if (ud.prun == 0 && rl.prun == 0 && fb.prun == 0 && maxl < 5) {
         maxDep2 = maxl;
@@ -502,7 +541,7 @@ int8_t min2phase::Search::phase1opt(coords::CoordCube ud, coords::CoordCube rl, 
             move[length1 - maxl] = m;
             valid1 = std::min((int8_t) valid1, (int8_t)(length1 - maxl));
 
-            if (phase1opt(nodeUD[maxl], nodeRL[maxl], nodeFB[maxl], ssym & coords::moveCubeSym[m], maxl - 1, axis) == 0)
+            if (phase1opt(nodeUD[maxl], nodeRL[maxl], nodeFB[maxl], ssym & coords::coords.moveCubeSym[m], maxl - 1, axis) == 0)
                 return 0;
         }
     }

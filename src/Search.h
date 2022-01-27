@@ -1,3 +1,10 @@
+/**
+ * min2phaseCXX Copyright (C) 2022 Borgo Federico
+ * This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
+ * This is free software, and you are welcome to redistribute it
+ * under certain conditions; type `show c' for details.
+ */
+
 #ifndef MIN2PHASE_SEARCH_H
 #define MIN2PHASE_SEARCH_H 1
 
@@ -22,8 +29,8 @@ namespace min2phase {
         CubieCube solveCube;
         CubieCube::OutputFormat solution;
 
-        int8_t move[info::MAX_LENGTH]{};
-        int8_t preMoves[MAX_PRE_MOVES]{};
+        int8_t move[info::MAX_LENGTH] = {0};
+        int8_t preMoves[MAX_PRE_MOVES] = {0};
 
         uint8_t* movesUsed = nullptr;
 
@@ -95,10 +102,9 @@ namespace min2phase {
         std::string solve(const std::string &facelets, int8_t maxDepth, int32_t probeMax, int32_t probeMin,
                           int8_t verbose, uint8_t *movesUsed);
 
-    private:
-
         int8_t verify(const std::string &facelets);
 
+    private:
         void initSearch();
 
         std::string search();
