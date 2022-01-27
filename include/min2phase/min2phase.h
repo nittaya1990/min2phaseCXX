@@ -23,12 +23,21 @@
 #include <cstdint>
 #include <string>
 
-//#define MIN2PHASE_DEBUG
+/**
+ * Used to print the info of the solver.
+ * 0-generic
+ * 1-more details
+ *
+ * Do not change this if you are not debugging the solver.
+ */
+//#define MIN2PHASE_DEBUG 0
 
 #ifdef MIN2PHASE_DEBUG
 #include <iostream>
+///logger
 #define MIN2PHASE_OUTPUT(x) std::cout << x << std::endl;
 #else
+///fake logger
 #define MIN2PHASE_OUTPUT(x)
 #endif
 
@@ -119,10 +128,51 @@ namespace min2phase{
      * @param probeMin : the min of cube explored in phase 2.
      * @param verbose  : the format for the output strings.
      * @param usedMoves: the pointer to store the number of moves used.
-     * @return         : the moved necessary to solve the cube. Delete the return value when
-     *                   you don't need it anymore.
+     * @return         : the moved necessary to solve the cube.
      */
     std::string solve(const std::string& facelets, int8_t maxDepth, int32_t probeMax, int32_t probeMin, int8_t verbose, uint8_t* usedMoves = nullptr);
+
+    /**
+     * This is used to init and http server.
+     *
+     * @warning: this function will abilitate an handler for the zombie process,
+     *           do not register another handler with SIGCHLD.
+     *
+     * @param port      : the port of the server.
+     * @pram mReq       : (Optional) the max number of requests.
+     * @return          : true if it was done correctly, false if not.
+     */
+    bool server(uint16_t port, uint16_t mReq = 10000);
+
+    /**
+     * This stops the solver server. It also remove the SIGCHLD signal handler.
+     *
+     * @return          : true if it was done correctly, false if not.
+     */
+    bool stop();
+
+    /**
+     * Remote cube solver. It connects form a remote cube solver server and
+     * ask the solution of the cube.
+     *
+     * @see: the local solver documentation
+     *
+     * @param ip        : the IP of the server.
+     * @param port      : the pot server
+     * @param facelet   : the order of colors like the cube above.
+     * @param maxDepth  : the max of moves used to solve the cube, from 20 to 31.
+     * @param probeMax  : the max of cube explored in phase 2.
+     * @param probeMin  : the min of cube explored in phase 2.
+     * @param verbose   : the format for the output strings.
+     * @param usedMoves : the pointer to store the number of moves used.
+     * @param time      : the string pointer to store the time used to solve the cube.
+     * @return          : the moved necessary to solve the cube.
+     */
+    std::string webSearch(const std::string& ip, int32_t port,
+                          const std::string &facelets, int8_t maxDepth,
+                          int32_t probeMax, int32_t probeMin,
+                          int8_t verbose, uint8_t* usedMoves = nullptr,
+                          std::string *time = nullptr);
 }
 
 #endif //MIN2PHASE

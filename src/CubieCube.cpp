@@ -558,6 +558,8 @@ namespace min2phase {
 
         delete[] solution;
 
+        MIN2PHASE_OUTPUT("Sol found: " + solutionStr);
+
         return solutionStr;
     }
 }

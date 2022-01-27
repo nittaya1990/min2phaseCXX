@@ -3,6 +3,8 @@
  * This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
  * This is free software, and you are welcome to redistribute it
  * under certain conditions; type `show c' for details.
+ *
+ * This file contains an example of the benchmark of the algorithm.
  */
 
 #include <min2phase/tools.h>

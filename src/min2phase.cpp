@@ -8,6 +8,7 @@
 #include <fstream>
 #include <min2phase/min2phase.h>
 #include "Search.h"
+#include "http.h"
 
 namespace min2phase {
 
@@ -58,5 +59,25 @@ namespace min2phase {
                                      int8_t verbose, uint8_t* usedMoves) {
         MIN2PHASE_OUTPUT("Init solving.")
         return Search().solve(facelets, maxDepth, probeMax, probeMin, verbose, usedMoves);
+    }
+
+    //init server
+    bool server(uint16_t port, uint16_t mReq){
+        return http::init(port, mReq);
+    }
+
+    //stop solver
+    bool stop(){
+        return http::stop();
+    }
+
+    //remote search
+    std::string webSearch(const std::string& ip, int32_t port,
+                          const std::string &facelets, int8_t maxDepth,
+                          int32_t probeMax, int32_t probeMin,
+                          int8_t verbose, uint8_t* usedMoves,
+                          std::string *time){
+
+        return http::webSolver(ip, port, facelets, maxDepth, probeMax, probeMin, verbose, usedMoves, time);
     }
 }

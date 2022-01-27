@@ -76,6 +76,8 @@ int8_t min2phase::Search::verify(const std::string& facelets) {
 
     CubieCube::toCubieCube(cube, solveCube);
 
+    MIN2PHASE_OUTPUT("Solving a cube.")
+
     return solveCube.check();
 }
 
@@ -135,7 +137,9 @@ int8_t min2phase::Search::phase1PreMoves(int8_t maxl, int8_t lm, CubieCube* cc, 
 
     const int32_t VAL = 0x36FB7;
 
+#if MIN2PHASE_DEBUG > 1
     MIN2PHASE_OUTPUT("Phase 1 pre moves.")
+#endif
 
     preMoveLen = maxPreMoves-maxl;
 
@@ -183,7 +187,9 @@ int8_t min2phase::Search::phase1PreMoves(int8_t maxl, int8_t lm, CubieCube* cc, 
 int8_t min2phase::Search::phase1(coords::CoordCube* node, uint16_t ssym, int8_t maxl, int8_t lm) {
     int8_t ret, axis, m, power, prun;
 
+#if MIN2PHASE_DEBUG > 1
     MIN2PHASE_OUTPUT("Phase 1.")
+#endif
 
     if (node->prun == 0 && maxl < 5) {
         if (allowShorter || maxl == 0) {
@@ -235,7 +241,9 @@ int8_t min2phase::Search::initPhase2Pre() {
     int8_t p2switch, ret;
     int8_t i, m;
 
+#if MIN2PHASE_DEBUG > 1
     MIN2PHASE_OUTPUT("Init phase 2.")
+#endif
 
     if (probe >= (!solution.isFound ? probeMax : probeMin))
         return 0;
@@ -328,7 +336,9 @@ int8_t min2phase::Search::initPhase2(uint16_t p2corn, int8_t p2csym, uint16_t p2
     int8_t prun, depth2, i;
     int8_t ret;
 
+#if MIN2PHASE_DEBUG > 1
     MIN2PHASE_OUTPUT("Init phase 2.")
+#endif
 
     prun = std::max(
             coords::getPruning(coords::coords.EPermCCombPPrun,
@@ -378,7 +388,9 @@ int8_t min2phase::Search::phase2(uint16_t edge, int8_t esym, uint16_t corn, int8
     int16_t moveMask;
     int8_t m, ret;
 
+#if MIN2PHASE_DEBUG > 1
     MIN2PHASE_OUTPUT("Phase 2.")
+#endif
 
     if (edge == 0 && corn == 0 && mid == 0)
         return maxl;
@@ -477,7 +489,9 @@ std::string min2phase::Search::searchOpt() {
 int8_t min2phase::Search::phase1opt(coords::CoordCube ud, coords::CoordCube rl, coords::CoordCube fb, int64_t ssym, int8_t maxl, int8_t lm) {
     uint8_t axis, power, prun_ud, prun_rl, prun_fb, m;
 
+#if MIN2PHASE_DEBUG > 1
     MIN2PHASE_OUTPUT("Phase 1 optimal.")
+#endif
 
     if (ud.prun == 0 && rl.prun == 0 && fb.prun == 0 && maxl < 5) {
         maxDep2 = maxl;
