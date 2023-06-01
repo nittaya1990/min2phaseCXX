@@ -194,7 +194,7 @@ namespace min2phase { namespace tools {
         for (i = 0; i < N_SOL_BENCH; i++) {
             randState = min2phase::tools::randomCube();
             begin = high_resolution_clock::now();
-            solve(randState, 0, maxMoves, 1000000, probeMin, &usedMoves);
+            solve(randState, maxMoves, 1000000, probeMin, 0, &usedMoves);
             end = high_resolution_clock::now();
 
             *avgTime += (float) duration_cast<milliseconds>(end - begin).count();
