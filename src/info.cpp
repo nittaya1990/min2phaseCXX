@@ -27,7 +27,7 @@ namespace min2phase { namespace info {
             Cnk[i][0] = Cnk[i][i] = 1;
 
             for (j = 1; j < i; j++)
-                Cnk[i][j] = Cnk[i - 1][j - 1] + Cnk[i - 1][j];
+                Cnk[i][j] = Cnk[i? i-1 : 0][j - 1] + Cnk[i? i-1 : 0][j];
         }
     }
 
